@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1e3c72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="物资计时器">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>游戏物资波动刷新计时器 · 沉浸式语言学习</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e2ea0 100%);
+    min-height: 100vh;
+    color: #f5f5f7;
+    padding: 20px;
+  }
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    padding: 24px 0 32px;
+  }
+  header h1 {
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #ffd89b, #19547b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 20px rgba(255, 216, 155, 0.25);
+  }
+  header p {
+    margin-top: 8px;
+    opacity: 0.75;
+    font-size: 0.95rem;
+  }
+
+  .lang-switch {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .lang-switch button {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #f5f5f7;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .lang-switch button.active {
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    border-color: transparent;
+  }
+  .lang-switch button:hover:not(.active) {
+    background: rgba(255,255,255,0.16);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr;
+    gap: 20px;
+  }
+  @media (max-width: 960px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: rgba(20, 24, 45, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+  .card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffd89b;
+  }
+  .card h2::before {
+    content: "";
+    width: 4px; height: 18px;
+    background: linear-gradient(180deg, #ffd89b, #ff5e62);
+    border-radius: 2px;
+  }
+
+  /* 添加物资表单 */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .form-row.triple { grid-template-columns: 1.2fr 1fr 1fr; }
+  label {
+    display: block;
+    font-size: 0.78rem;
+    opacity: 0.75;
+    margin-bottom: 4px;
+  }
+  input, select {
+    width: 100%;
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+  input:focus, select:focus {
+    border-color: #ffd89b;
+    background: rgba(255,255,255,0.1);
+  }
+  .btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    color: #fff;
+    font-weight: 500;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    width: 100%;
+    margin-top: 6px;
+  }
+  .btn-primary:hover { box-shadow: 0 6px 18px rgba(102,126,234,0.45); transform: translateY(-1px); }
+  .btn-danger { background: linear-gradient(135deg, #ff5e62, #ff9966); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn:hover { opacity: 0.92; }
+  .btn:active { transform: translateY(0); }
+
+  /* 物资列表 */
+  .item-list {
+    max-height: 420px;
+    overflow-y: auto;
+    margin-top: 6px;
+  }
+  .item-list::-webkit-scrollbar { width: 6px; }
+  .item-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+  .item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+  }
+  .item:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,216,155,0.3); }
+  .item.active { border-color: #ffd89b; box-shadow: 0 0 20px rgba(255,216,155,0.2); }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .item-name {
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .item-lang {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    font-style: italic;
+  }
+  .item-meta {
+    font-size: 0.78rem;
+    opacity: 0.7;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .item-meta span::before { content: "· "; opacity: 0.5; }
+  .item-meta span:first-child::before { content: ""; }
+
+  .timer-display {
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+  }
+  .timer-display.warn { color: #ff5e62; animation: pulse 0.8s infinite; }
+  .timer-display.good { color: #7dd3a0; }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .stats-mini {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+  }
+  .stat-box {
+    background: rgba(0,0,0,0.2);
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .stat-box .v { font-size: 0.95rem; font-weight: 600; color: #ffd89b; }
+  .stat-box .k { opacity: 0.65; font-size: 0.7rem; margin-top: 2px; }
+
+  .item-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .item-actions button {
+    flex: 1;
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+  .btn-record { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .btn-reset { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
+
+  /* 历史记录 */
+  .history-section { margin-top: 20px; }
+  .history-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 640px) {
+    .history-summary { grid-template-columns: repeat(2, 1fr); }
+  }
+  .summary-card {
+    background: linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.25));
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  .summary-card .num {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #ffd89b;
+    font-family: "Consolas", monospace;
+  }
+  .summary-card .lbl {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  .history-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .history-list::-webkit-scrollbar { width: 6px; }
+  .history-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+  .history-entry {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    align-items: center;
+  }
+  .h-index {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  .h-info { line-height: 1.5; }
+  .h-info .name { color: #ffd89b; font-weight: 600; }
+  .h-info .detail { opacity: 0.7; font-size: 0.78rem; }
+  .h-duration {
+    font-family: "Consolas", monospace;
+    font-size: 0.9rem;
+    color: #7dd3a0;
+    font-weight: 600;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 32px 12px;
+    opacity: 0.5;
+    font-size: 0.9rem;
+  }
+
+  /* 提醒面板 */
+  .reminder-list {
+    max-height: 280px;
+    overflow-y: auto;
+  }
+  .reminder-list::-webkit-scrollbar { width: 6px; }
+  .reminder-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+  .reminder-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .reminder-item.due { border-color: #ff5e62; background: rgba(255,94,98,0.12); animation: pulseBg 1s infinite; }
+  .reminder-item.lead { border-color: #ffd89b; }
+  @keyframes pulseBg {
+    0%,100% { background: rgba(255,94,98,0.12); }
+    50% { background: rgba(255,94,98,0.25); }
+  }
+  .r-info .name { color: #ffd89b; font-weight: 600; }
+  .r-info .at { opacity: 0.65; font-size: 0.75rem; }
+  .r-countdown {
+    font-family: "Consolas", monospace;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #7dd3a0;
+    min-width: 80px;
+    text-align: right;
+  }
+  .reminder-item.due .r-countdown { color: #ff5e62; }
+  .r-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(255,216,155,0.2);
+    color: #ffd89b;
+  }
+
+  /* 语言学习 */
+  .learn-panel {
+    background: linear-gradient(135deg, rgba(255,216,155,0.08), rgba(255,94,98,0.08));
+    border: 1px dashed rgba(255,216,155,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .learn-panel h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #ffd89b;
+  }
+  .learn-word {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .learn-word .cn { font-size: 1.15rem; font-weight: bold; }
+  .learn-word .en { font-style: italic; opacity: 0.8; }
+  .learn-phrase {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    line-height: 1.6;
+    padding-left: 8px;
+    border-left: 2px solid rgba(255,216,155,0.4);
+    margin: 8px 0;
+  }
+
+  .footer-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .footer-actions .btn { flex: 1; }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20,24,45,0.95);
+    border: 1px solid #ffd89b;
+    padding: 12px 22px;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1 data-i18n="title">⚔ 游戏物资波动刷新计时器</h1>
+    <p data-i18n="subtitle">沉浸式语言学习 · 追踪物资刷新规律 · 计算波动平均时间</p>
+    <div class="lang-switch">
+      <button data-lang="zh" class="active">中文模式</button>
+      <button data-lang="en">English Mode</button>
+      <button data-lang="jp">日本語モード</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- 左列：添加 + 列表 -->
+    <div>
+      <div class="card">
+        <h2 data-i18n="addTitle">➕ 添加 / 自定义物资</h2>
+        <div class="form-row">
+          <div>
+            <label data-i18n="labelNameCN">物品名称 (中文)</label>
+            <input id="inputNameCN" placeholder="如：铁矿石">
+          </div>
+          <div>
+            <label data-i18n="labelNameEN">Item Name (English)</label>
+            <input id="inputNameEN" placeholder="e.g. Iron Ore">
+          </div>
+        </div>
+        <div class="form-row triple">
+          <div>
+            <label data-i18n="labelBase">基础刷新时长 (秒)</label>
+            <input id="inputBase" type="number" min="1" value="600">
+          </div>
+          <div>
+            <label data-i18n="labelMin">最小波动 (秒)</label>
+            <input id="inputMin" type="number" min="0" value="300">
+          </div>
+          <div>
+            <label data-i18n="labelMax">最大波动 (秒)</label>
+            <input id="inputMax" type="number" min="0" value="900">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btnAdd" data-i18n="btnAdd">＋ 添加物资并开启波动计时</button>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2 data-i18n="listTitle">📋 物资计时器列表</h2>
+        <div class="item-list" id="itemList">
+          <div class="empty" data-i18n="emptyList">暂无物资，快添加一个吧！</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右列：历史 + 学习 -->
+    <div>
+      <div class="card history-section">
+        <h2 data-i18n="historyTitle">📊 波动刷新历史 · 统计分析</h2>
+        <div class="history-summary">
+          <div class="summary-card">
+            <div class="num" id="totalRecords">0</div>
+            <div class="lbl" data-i18n="statTotal">总记录数</div>
+          </div>
+          <div class="summary-card">
+            <div class="num" id="avgDuration">00:00</div>
+            <div class="lbl" data-i18n="statAvg">平均波动时长</div>
+          </div>
+          <div class="summary-card">
+            <div class="num" id="minDuration">--</div>
+            <div class="lbl" data-i18n="statMin">最短时间</div>
+          </div>
+          <div class="summary-card">
+            <div class="num" id="maxDuration">--</div>
+            <div class="lbl" data-i18n="statMax">最长时间</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:8px; margin-bottom:10px; align-items:center;">
+          <select id="filterItem" style="max-width:200px;">
+            <option value="__all__" data-i18n="filterAll">全部物资</option>
+          </select>
+          <button class="btn btn-ghost" id="btnClearHistory" data-i18n="btnClearHistory">清除筛选下的历史</button>
+        </div>
+
+        <div class="history-list" id="historyList">
+          <div class="empty" data-i18n="emptyHistory">尚无波动刷新记录</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <h2 data-i18n="reminderTitle">🔔 预计下次刷新 · 提醒面板</h2>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
+          <button class="btn btn-ghost" id="btnEnableNotify" data-i18n="btnEnableNotify">开启系统通知</button>
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; opacity:0.85; cursor:pointer;">
+            <input type="checkbox" id="chkSound" checked> <span data-i18n="lblSound">提示音</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; opacity:0.85; cursor:pointer;">
+            <input type="checkbox" id="chkLead" checked> <span data-i18n="lblLead">到点前 10 秒提醒</span>
+          </label>
+          <span id="notifyStatus" style="font-size:0.78rem; opacity:0.7; margin-left:auto;"></span>
+        </div>
+        <div class="reminder-list" id="reminderList">
+          <div class="empty" data-i18n="emptyReminder">尚无物资，添加后将在此显示下次刷新倒计时</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="learn-panel">
+          <h3 data-i18n="learnTitle">🎓 今日语言学习卡片</h3>
+          <div id="learnContent">
+            <div class="learn-word">
+              <span class="cn">波动刷新</span>
+              <span class="en">Wave Refresh / Fluctuation</span>
+            </div>
+            <div class="learn-phrase">
+              "The spawn timing of resources fluctuates within a certain range, making each harvest feel unique."
+              <br>物资的刷新时间在一定范围内波动，让每次采集都充满变数。
+            </div>
+            <div class="learn-word">
+              <span class="cn">刷新间隔</span>
+              <span class="en">Respawn Interval</span>
+            </div>
+            <div class="learn-phrase">
+              "Track the interval between spawns to estimate when the next resource will appear."
+              <br>追踪刷新之间的间隔，以预估下一个物资何时出现。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ======================== 数据层 ======================== */
+const STORAGE_KEY = "game_refresh_timer_v1";
+let state = {
+  items: [],       // {id, nameCN, nameEN, base, min, max, nextAt, createdAt, lastRecordAt}
+  history: [],     // {id, itemId, itemName, durationSec, recordedAt, baseUsed}
+  lang: "zh",
+  settings: { sound: true, lead: true, notif: false }
+};
+
+// 已为本会话提醒过/触发过的物资 id，避免重复推送
+const firedSet = new Set();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      state.items = d.items || [];
+      state.history = d.history || [];
+      state.lang = d.lang || "zh";
+      if (d.settings) state.settings = Object.assign(state.settings, d.settings);
+    }
+  } catch(e) { console.warn(e); }
+}
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) { console.warn(e); }
+}
+
+/* ======================== 工具函数 ======================== */
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function formatDuration(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (h > 0) return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+function formatTime(ts) {
+  const d = new Date(ts);
+  return `${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+}
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+/* 生成波动时间：在 [min, max] 区间内随机，若越界则钳制 */
+function randomWaveTime(item) {
+  const lo = Math.min(item.min, item.max);
+  const hi = Math.max(item.min, item.max);
+  return Math.floor(lo + Math.random() * (hi - lo + 1));
+}
+
+/* ======================== 渲染 ======================== */
+const i18n = {
+  zh: {
+    title: "⚔ 游戏物资波动刷新计时器",
+    subtitle: "沉浸式语言学习 · 追踪物资刷新规律 · 计算波动平均时间",
+    addTitle: "➕ 添加 / 自定义物资",
+    labelNameCN: "物品名称 (中文)",
+    labelNameEN: "物品名称 (英文)",
+    labelBase: "基础刷新时长 (秒)",
+    labelMin: "最小波动 (秒)",
+    labelMax: "最大波动 (秒)",
+    btnAdd: "＋ 添加物资并开启波动计时",
+    listTitle: "📋 物资计时器列表",
+    emptyList: "暂无物资，快添加一个吧！",
+    historyTitle: "📊 波动刷新历史 · 统计分析",
+    statTotal: "总记录数",
+    statAvg: "平均波动时长",
+    statMin: "最短时间",
+    statMax: "最长时间",
+    filterAll: "全部物资",
+    btnClearHistory: "清除筛选下的历史",
+    emptyHistory: "尚无波动刷新记录",
+    reminderTitle: "🔔 预计下次刷新 · 提醒面板",
+    btnEnableNotify: "开启系统通知",
+    lblSound: "提示音",
+    lblLead: "到点前 10 秒提醒",
+    emptyReminder: "尚无物资，添加后将在此显示下次刷新倒计时",
+    tagDue: "已刷新",
+    tagLead: "即将刷新",
+    learnTitle: "🎓 今日语言学习卡片"
+  },
+  en: {
+    title: "⚔ Game Item Wave Refresh Timer",
+    subtitle: "Immersive language learning · Track spawn patterns · Calculate average fluctuation",
+    addTitle: "➕ Add / Customize Item",
+    labelNameCN: "Name (CN)",
+    labelNameEN: "Name (EN)",
+    labelBase: "Base Duration (s)",
+    labelMin: "Min Fluctuation (s)",
+    labelMax: "Max Fluctuation (s)",
+    btnAdd: "＋ Add Item & Start Wave Timer",
+    listTitle: "📋 Item Timers",
+    emptyList: "No items yet — add one above!",
+    historyTitle: "📊 Wave History · Statistics",
+    statTotal: "Total Records",
+    statAvg: "Avg Duration",
+    statMin: "Shortest",
+    statMax: "Longest",
+    filterAll: "All Items",
+    btnClearHistory: "Clear Filtered History",
+    emptyHistory: "No wave records yet",
+    reminderTitle: "🔔 Next Spawn · Reminder Panel",
+    btnEnableNotify: "Enable System Notification",
+    lblSound: "Sound",
+    lblLead: "Lead 10s Alert",
+    emptyReminder: "No items yet — next spawn countdowns will appear here",
+    tagDue: "Spawned",
+    tagLead: "Soon",
+    learnTitle: "🎓 Today's Language Card"
+  },
+  jp: {
+    title: "⚔ ゲーム素材 波動リフレッシュタイマー",
+    subtitle: "没入型言語学習 · 出現パターン追跡 · 平均波動時間の計算",
+    addTitle: "➕ 素材を追加 / カスタマイズ",
+    labelNameCN: "アイテム名 (中国語)",
+    labelNameEN: "Item Name (英語)",
+    labelBase: "基本リフレッシュ (秒)",
+    labelMin: "最小波動 (秒)",
+    labelMax: "最大波動 (秒)",
+    btnAdd: "＋ 素材を追加して波動計測開始",
+    listTitle: "📋 素材タイマー一覧",
+    emptyList: "素材がありません。追加してみましょう！",
+    historyTitle: "📊 波動履歴 · 統計",
+    statTotal: "総記録数",
+    statAvg: "平均波動時間",
+    statMin: "最短時間",
+    statMax: "最長時間",
+    filterAll: "すべての素材",
+    btnClearHistory: "フィルタ内履歴クリア",
+    emptyHistory: "波動記録はまだありません",
+    reminderTitle: "🔔 次回出現 · リマインダ",
+    btnEnableNotify: "システム通知を有効化",
+    lblSound: "音",
+    lblLead: "10秒前通知",
+    emptyReminder: "素材がありません — 次回出現のカウントダウンがここに表示されます",
+    tagDue: "出現",
+    tagLead: "もうすぐ",
+    learnTitle: "🎓 今日の言語カード"
+  }
+};
+
+function applyI18n() {
+  const dict = i18n[state.lang] || i18n.zh;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.getAttribute("data-i18n");
+    if (dict[k]) el.textContent = dict[k];
+  });
+  document.querySelectorAll(".lang-switch button").forEach(b => {
+    b.classList.toggle("active", b.dataset.lang === state.lang);
+  });
+}
+
+function renderItemList() {
+  const list = document.getElementById("itemList");
+  if (state.items.length === 0) {
+    const dict = i18n[state.lang] || i18n.zh;
+    list.innerHTML = `<div class="empty">${dict.emptyList}</div>`;
+    return;
+  }
+  list.innerHTML = state.items.map(it => {
+    const now = Date.now();
+    const remain = Math.max(0, (it.nextAt - now) / 1000);
+    const warn = remain <= 30 && remain > 0;
+    const good = it.nextAt <= now;
+    const displayName = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
+    const otherName = state.lang === "en" ? it.nameCN : it.nameEN;
+    return `
+      <div class="item ${good ? 'active' : ''}" data-id="${it.id}">
+        <div class="item-header">
+          <div class="item-name">🎯 ${escapeHtml(displayName)}
+            ${otherName ? `<span class="item-lang">/ ${escapeHtml(otherName)}</span>` : ''}
+          </div>
+        </div>
+        <div class="item-meta">
+          <span>基础 ${it.base}s</span>
+          <span>波动 ${Math.min(it.min,it.max)} ~ ${Math.max(it.min,it.max)}s</span>
+          <span>下次刷新: ${formatTime(it.nextAt)}</span>
+        </div>
+        <div class="timer-display ${warn ? 'warn' : ''} ${good ? 'good' : ''}" data-timer="${it.id}">
+          ${good ? "⏰ 已刷新！" : formatDuration(remain)}
+        </div>
+        <div class="stats-mini">
+          <div class="stat-box"><div class="v">${itemRecordCount(it.id)}</div><div class="k">${state.lang==='zh'?'记录数':state.lang==='en'?'Records':'記録'}</div></div>
+          <div class="stat-box"><div class="v">${formatDuration(itemAvg(it.id))}</div><div class="k">${state.lang==='zh'?'平均':state.lang==='en'?'Avg':'平均'}</div></div>
+          <div class="stat-box"><div class="v">${formatDuration(itemBase(it.id))}</div><div class="k">${state.lang==='zh'?'基础':state.lang==='en'?'Base':'基本'}</div></div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-record" data-act="record" data-id="${it.id}">✓ ${state.lang==='zh'?'记录本次刷新':state.lang==='en'?'Record Spawn':'出現を記録'}</button>
+          <button class="btn btn-reset" data-act="reset" data-id="${it.id}">↻ ${state.lang==='zh'?'重置计时':state.lang==='en'?'Reset Timer':'リセット'}</button>
+          <button class="btn btn-danger" data-act="delete" data-id="${it.id}">✕ ${state.lang==='zh'?'删除':state.lang==='en'?'Delete':'削除'}</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  // 绑定事件
+  list.querySelectorAll("button[data-act]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      const act = btn.dataset.act;
+      if (act === "record") recordSpawn(id);
+      else if (act === "reset") resetTimer(id);
+      else if (act === "delete") deleteItem(id);
+    });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s||"").replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function itemRecordCount(id) {
+  return state.history.filter(h => h.itemId === id).length;
+}
+function itemAvg(id) {
+  const arr = state.history.filter(h => h.itemId === id).map(h => h.durationSec);
+  if (arr.length === 0) return 0;
+  return Math.round(arr.reduce((a,b)=>a+b,0) / arr.length);
+}
+function itemBase(id) {
+  const it = state.items.find(i => i.id === id);
+  return it ? it.base : 0;
+}
+
+function renderHistory() {
+  const filter = document.getElementById("filterItem").value;
+  const list = document.getElementById("historyList");
+  const dict = i18n[state.lang] || i18n.zh;
+
+  // 更新筛选下拉
+  const sel = document.getElementById("filterItem");
+  const cur = sel.value;
+  sel.innerHTML = `<option value="__all__">${dict.filterAll}</option>` +
+    state.items.map(it => {
+      const n = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
+      return `<option value="${it.id}">${escapeHtml(n)}</option>`;
+    }).join("");
+  if (state.items.some(i => i.id === cur) || cur === "__all__") sel.value = cur;
+
+  let arr = state.history.slice().sort((a,b) => b.recordedAt - a.recordedAt);
+  if (filter !== "__all__") arr = arr.filter(h => h.itemId === filter);
+
+  // 汇总
+  const total = arr.length;
+  document.getElementById("totalRecords").textContent = total;
+  if (total > 0) {
+    const durs = arr.map(h => h.durationSec);
+    const avg = Math.round(durs.reduce((a,b)=>a+b,0) / total);
+    document.getElementById("avgDuration").textContent = formatDuration(avg);
+    document.getElementById("minDuration").textContent = formatDuration(Math.min(...durs));
+    document.getElementById("maxDuration").textContent = formatDuration(Math.max(...durs));
+  } else {
+    document.getElementById("avgDuration").textContent = "00:00";
+    document.getElementById("minDuration").textContent = "--";
+    document.getElementById("maxDuration").textContent = "--";
+  }
+
+  if (arr.length === 0) {
+    list.innerHTML = `<div class="empty">${dict.emptyHistory}</div>`;
+    return;
+  }
+  list.innerHTML = arr.map((h, idx) => {
+    const diffBase = h.baseUsed ? (h.durationSec - h.baseUsed) : 0;
+    const diffStr = diffBase === 0 ? "= Base" : (diffBase > 0 ? `+${diffBase}s` : `${diffBase}s`);
+    return `
+      <div class="history-entry">
+        <div class="h-index">${arr.length - idx}</div>
+        <div class="h-info">
+          <div class="name">${escapeHtml(h.itemName)}</div>
+          <div class="detail">${formatTime(h.recordedAt)} · Base ${h.baseUsed||'-'}s · ${diffStr}</div>
+        </div>
+        <div class="h-duration">${formatDuration(h.durationSec)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ======================== 业务操作 ======================== */
+function addItem() {
+  const nameCN = document.getElementById("inputNameCN").value.trim();
+  const nameEN = document.getElementById("inputNameEN").value.trim();
+  const base = parseInt(document.getElementById("inputBase").value, 10);
+  const min = parseInt(document.getElementById("inputMin").value, 10);
+  const max = parseInt(document.getElementById("inputMax").value, 10);
+
+  if (!nameCN && !nameEN) {
+    toast(state.lang === 'zh' ? "请填写物品名称" : "Please enter an item name");
+    return;
+  }
+  if (isNaN(base) || isNaN(min) || isNaN(max) || base <= 0 || min < 0 || max < 0) {
+    toast(state.lang === 'zh' ? "时长需为正整数" : "Duration must be positive");
+    return;
+  }
+
+  const it = {
+    id: uid(),
+    nameCN, nameEN, base, min, max,
+    createdAt: Date.now(),
+    lastRecordAt: Date.now()
+  };
+  // 首次波动：从当前时刻 + 随机波动时长
+  const wave = randomWaveTime(it);
+  it.nextAt = Date.now() + wave * 1000;
+  it.currentWave = wave;
+  state.items.push(it);
+  save();
+  renderAll();
+  toast(state.lang === 'zh' ? "已添加，开始波动计时！" : "Added — wave timer started!");
+
+  document.getElementById("inputNameCN").value = "";
+  document.getElementById("inputNameEN").value = "";
+}
+
+function recordSpawn(id) {
+  const it = state.items.find(i => i.id === id);
+  if (!it) return;
+  const now = Date.now();
+  const durationSec = Math.round((now - (it.lastRecordAt || it.createdAt)) / 1000);
+  const name = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
+  state.history.push({
+    id: uid(),
+    itemId: it.id,
+    itemName: name,
+    durationSec: Math.max(1, durationSec),
+    recordedAt: now,
+    baseUsed: it.base
+  });
+  it.lastRecordAt = now;
+  const wave = randomWaveTime(it);
+  it.currentWave = wave;
+  it.nextAt = now + wave * 1000;
+  save();
+  renderAll();
+  toast(`${state.lang==='zh'?'已记录刷新：':'Spawn recorded: '}${name} (${formatDuration(durationSec)})`);
+}
+
+function resetTimer(id) {
+  const it = state.items.find(i => i.id === id);
+  if (!it) return;
+  it.lastRecordAt = Date.now();
+  const wave = randomWaveTime(it);
+  it.currentWave = wave;
+  it.nextAt = Date.now() + wave * 1000;
+  save();
+  renderAll();
+  toast(state.lang==='zh' ? "已重置，生成新的波动时间" : "Reset — new wave generated");
+}
+
+function deleteItem(id) {
+  const ok = confirm(state.lang==='zh' ? "确认删除该物资？历史记录保留。" : "Delete this item? History stays.");
+  if (!ok) return;
+  state.items = state.items.filter(i => i.id !== id);
+  save();
+  renderAll();
+}
+
+function clearFilteredHistory() {
+  const filter = document.getElementById("filterItem").value;
+  const ok = confirm(filter === "__all__"
+    ? (state.lang==='zh' ? "清除全部历史记录？" : "Clear ALL history?")
+    : (state.lang==='zh' ? "清除该物资下的历史？" : "Clear this item's history?"));
+  if (!ok) return;
+  if (filter === "__all__") {
+    state.history = [];
+  } else {
+    state.history = state.history.filter(h => h.itemId !== filter);
+  }
+  save();
+  renderAll();
+}
+
+/* ======================== 定时刷新 ======================== */
+function tick() {
+  const now = Date.now();
+  document.querySelectorAll("[data-timer]").forEach(el => {
+    const id = el.getAttribute("data-timer");
+    const it = state.items.find(i => i.id === id);
+    if (!it) return;
+    const remain = (it.nextAt - now) / 1000;
+    if (remain <= 0) {
+      el.textContent = state.lang==='zh' ? "⏰ 已刷新！点击记录" : "⏰ Spawned! Click Record";
+      el.classList.remove("warn");
+      el.classList.add("good");
+    } else {
+      el.textContent = formatDuration(remain);
+      el.classList.toggle("warn", remain <= 30);
+      el.classList.remove("good");
+    }
+  });
+  // 提醒面板秒级刷新
+  renderReminderTick();
+  // 提醒触发（精确到秒，使用整数秒 key 防抖）
+  state.items.forEach(it => {
+    const remain = (it.nextAt - now) / 1000;
+    if (remain <= 0) {
+      const k = it.id + ":due";
+      if (!firedSet.has(k)) { firedSet.add(k); fireReminder(it, "due"); }
+    } else if (state.settings.lead && remain <= 10 && remain > 9.5) {
+      const k = it.id + ":lead";
+      if (!firedSet.has(k)) { firedSet.add(k); fireReminder(it, "lead"); }
+    }
+  });
+}
+
+function renderReminderTick() {
+  const list = document.getElementById("reminderList");
+  if (!list) return;
+  if (state.items.length === 0) return; // 初次空态由 renderReminder 维护
+  const now = Date.now();
+  // 仅更新数字，避免每次重建 DOM
+  list.querySelectorAll("[data-r-cd]").forEach(el => {
+    const id = el.getAttribute("data-r-cd");
+    const it = state.items.find(i => i.id === id);
+    if (!it) return;
+    const remain = (it.nextAt - now) / 1000;
+    if (remain <= 0) el.textContent = state.lang==='zh'?"已刷新！":state.lang==='en'?"Spawned!":"出現!";
+    else el.textContent = formatDuration(remain);
+    const row = el.closest(".reminder-item");
+    if (row) {
+      row.classList.toggle("due", remain <= 0);
+      row.classList.toggle("lead", remain > 0 && remain <= 10);
+    }
+  });
+}
+
+function renderReminder() {
+  const list = document.getElementById("reminderList");
+  if (!list) return;
+  const dict = i18n[state.lang] || i18n.zh;
+  if (state.items.length === 0) {
+    list.innerHTML = `<div class="empty">${dict.emptyReminder}</div>`;
+    return;
+  }
+  const sorted = state.items.slice().sort((a,b) => a.nextAt - b.nextAt);
+  const now = Date.now();
+  list.innerHTML = sorted.map(it => {
+    const remain = (it.nextAt - now) / 1000;
+    const displayName = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
+    const dueCls = remain <= 0 ? "due" : (remain <= 10 ? "lead" : "");
+    const tag = remain <= 0 ? `<span class="r-tag">${dict.tagDue}</span>` : (remain <= 10 ? `<span class="r-tag">${dict.tagLead}</span>` : "");
+    return `
+      <div class="reminder-item ${dueCls}">
+        <div class="r-info">
+          <div class="name">🎯 ${escapeHtml(displayName)}</div>
+          <div class="at">${formatTime(it.nextAt)} · base ${it.base}s</div>
+        </div>
+        <div class="r-countdown" data-r-cd="${it.id}">${remain <= 0 ? (state.lang==='zh'?'已刷新！':state.lang==='en'?'Spawned!':'出現!') : formatDuration(remain)}</div>
+        ${tag}
+      </div>
+    `;
+  }).join("");
+}
+
+function fireReminder(item, type) {
+  const dict = i18n[state.lang] || i18n.zh;
+  const displayName = state.lang === "en" ? (item.nameEN || item.nameCN) : (item.nameCN || item.nameEN);
+  let title, body;
+  if (type === "due") {
+    title = state.lang==='zh' ? "🔔 物资已刷新！" : state.lang==='en' ? "🔔 Item Spawned!" : "🔔 素材が出現！";
+    body  = `${displayName} ${state.lang==='zh'?'可采集':state.lang==='en'?'is ready to collect':'回収可能'}`;
+  } else {
+    title = state.lang==='zh' ? "⏰ 即将刷新" : state.lang==='en' ? "⏰ Spawn Imminent" : "⏰ もうすぐ出現";
+    body  = `${displayName} ${state.lang==='zh'?'将在 10 秒后刷新':state.lang==='en'?'spawns in 10s':'10秒後に出現'}`;
+  }
+  // 页面内 toast
+  toast(title + " — " + body);
+  // 提示音
+  if (state.settings.sound) playBeep(type === "due" ? 880 : 660);
+  // 系统通知
+  if (state.settings.notif && "Notification" in window && Notification.permission === "granted") {
+    try { new Notification(title, { body, icon: "", tag: "refresh-" + item.id + ":" + type }); } catch(e) {}
+  }
+}
+
+let audioCtx = null;
+function playBeep(freq) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audioCtx;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.frequency.value = freq;
+    o.type = "sine";
+    o.connect(g);
+    g.connect(ctx.destination);
+    const t = ctx.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.18, t + 0.02);
+    g.gain.linearRampToValueAtTime(0, t + 0.35);
+    o.start(t);
+    o.stop(t + 0.4);
+    // 到点提醒双音
+    if (freq === 880) {
+      const o2 = ctx.createOscillator();
+      const g2 = ctx.createGain();
+      o2.frequency.value = 1320;
+      o2.type = "sine";
+      o2.connect(g2); g2.connect(ctx.destination);
+      g2.gain.setValueAtTime(0, t + 0.18);
+      g2.gain.linearRampToValueAtTime(0.18, t + 0.20);
+      g2.gain.linearRampToValueAtTime(0, t + 0.55);
+      o2.start(t + 0.18); o2.stop(t + 0.6);
+    }
+  } catch(e) { /* 用户未交互前 AudioContext 会被阻止，正常情况 */ }
+}
+
+async function requestNotify() {
+  if (!("Notification" in window)) {
+    toast(state.lang==='zh'?"当前浏览器不支持系统通知":"Notifications not supported");
+    return;
+  }
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm === "granted") {
+      state.settings.notif = true;
+      save();
+      updateNotifyStatus();
+      toast(state.lang==='zh'?"系统通知已开启":"System notifications enabled");
+    } else {
+      toast(state.lang==='zh'?"通知权限被拒绝":"Notification permission denied");
+    }
+  } catch(e) { console.warn(e); }
+}
+
+function updateNotifyStatus() {
+  const el = document.getElementById("notifyStatus");
+  if (!el) return;
+  if (!("Notification" in window)) { el.textContent = "—"; return; }
+  const perm = Notification.permission;
+  if (perm === "granted" && state.settings.notif) {
+    el.textContent = state.lang==='zh'?"● 已开启":"● Enabled";
+  } else if (perm === "denied") {
+    el.textContent = state.lang==='zh'?"● 已拒绝（需在浏览器设置中开启）":"● Denied (enable in browser settings)";
+  } else {
+    el.textContent = state.lang==='zh'?"● 未开启":"● Disabled";
+  }
+}
+
+function renderAll() {
+  applyI18n();
+  renderItemList();
+  renderHistory();
+  renderReminder();
+  updateNotifyStatus();
+}
+
+/* ======================== 初始化 ======================== */
+function init() {
+  load();
+  applyI18n();
+
+  document.getElementById("btnAdd").addEventListener("click", addItem);
+  document.getElementById("btnClearHistory").addEventListener("click", clearFilteredHistory);
+  document.getElementById("filterItem").addEventListener("change", renderHistory);
+
+  // 提醒设置
+  document.getElementById("btnEnableNotify").addEventListener("click", requestNotify);
+  document.getElementById("chkSound").addEventListener("change", e => {
+    state.settings.sound = e.target.checked; save();
+  });
+  document.getElementById("chkLead").addEventListener("change", e => {
+    state.settings.lead = e.target.checked; save();
+  });
+  document.getElementById("chkSound").checked = !!state.settings.sound;
+  document.getElementById("chkLead").checked = !!state.settings.lead;
+
+  document.querySelectorAll(".lang-switch button").forEach(b => {
+    b.addEventListener("click", () => {
+      state.lang = b.dataset.lang;
+      save();
+      renderAll();
+    });
+  });
+
+  // 离开页面提示：将最近一次刷新时间写入 localStorage
+  // 重新打开页面时，若仍处于「刷新中」则给出"距离下次刷新 N 分钟"的提示
+  window.addEventListener("beforeunload", () => {
+    try {
+      const pending = state.items
+        .map(it => ({ name: it.nameCN || it.nameEN, at: it.nextAt }))
+        .filter(x => x.at > Date.now())
+        .sort((a,b) => a.at - b.at)
+        .slice(0, 5);
+      localStorage.setItem("game_refresh_timer_pending", JSON.stringify(pending));
+    } catch(e) {}
+  });
+
+  // 打开页面时检查暂存的下次刷新
+  try {
+    const raw = localStorage.getItem("game_refresh_timer_pending");
+    if (raw) {
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr) && arr.length > 0) {
+        const top = arr[0];
+        const ms = top.at - Date.now();
+        if (ms > 0) {
+          setTimeout(() => {
+            toast((state.lang==='zh'?'上次离开前最近的刷新：':'Last pending: ') + top.name +
+                  " · " + (state.lang==='zh'?'约 ':'in ') + formatDuration(ms/1000) +
+                  (state.lang==='zh'?' 后刷新':' to spawn'));
+          }, 600);
+        }
+      }
+    }
+  } catch(e) {}
+
+  // 注册后台刷新到期检查（即便切到后台，到点会尝试触发）
+  if ("serviceWorker" in navigator) {
+    // 仅占位，能力有限，仍靠前台 tick
+  }
+
+  renderAll();
+  setInterval(tick, 1000);
+}
+
+init();
+
+// 注册 Service Worker（PWA 离线 + 通知）
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW register failed:", err));
+  });
+}
+</script>
+</body>
+</html>
