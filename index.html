@@ -10,7 +10,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>游戏物资波动刷新计时器 · 沉浸式语言学习</title>
+<title>游戏工具</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -18,76 +18,85 @@
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e2ea0 100%);
     min-height: 100vh;
     color: #f5f5f7;
-    padding: 20px;
+    padding: 0;
   }
   .container {
     max-width: 1280px;
     margin: 0 auto;
+    padding-bottom: 40px;
   }
   header {
     text-align: center;
-    padding: 24px 0 32px;
+    padding: 18px 20px 12px;
   }
   header h1 {
-    font-size: 2.2rem;
+    font-size: 1.5rem;
     letter-spacing: 2px;
     background: linear-gradient(90deg, #ffd89b, #19547b);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 2px 20px rgba(255, 216, 155, 0.25);
   }
   header p {
-    margin-top: 8px;
-    opacity: 0.75;
-    font-size: 0.95rem;
+    margin-top: 4px;
+    opacity: 0.7;
+    font-size: 0.8rem;
   }
 
-  .lang-switch {
+  /* Tab 导航 */
+  .tab-nav {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 0;
+    margin: 0 16px 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 5px;
   }
-  .lang-switch button {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    color: #f5f5f7;
-    padding: 6px 14px;
-    border-radius: 20px;
+  .tab-btn {
+    flex: 1;
+    padding: 11px 14px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    border-radius: 11px;
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: all 0.2s;
+    transition: all 0.25s;
+    font-weight: 500;
   }
-  .lang-switch button.active {
-    background: linear-gradient(90deg, #ff9966, #ff5e62);
-    border-color: transparent;
+  .tab-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(102,126,234,0.45);
   }
-  .lang-switch button:hover:not(.active) {
-    background: rgba(255,255,255,0.16);
+  .tab-btn:hover:not(.active) {
+    color: rgba(255,255,255,0.9);
   }
+
+  .tab-content { display: none; padding: 0 16px; }
+  .tab-content.active { display: block; }
 
   .grid {
     display: grid;
-    grid-template-columns: 1.1fr 1.4fr;
-    gap: 20px;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 14px;
   }
   @media (max-width: 960px) {
     .grid { grid-template-columns: 1fr; }
   }
 
   .card {
-    background: rgba(20, 24, 45, 0.72);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(20, 24, 45, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 16px;
-    padding: 22px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
   }
   .card h2 {
-    font-size: 1.15rem;
-    margin-bottom: 16px;
+    font-size: 1rem;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -95,45 +104,50 @@
   }
   .card h2::before {
     content: "";
-    width: 4px; height: 18px;
+    width: 3px; height: 15px;
     background: linear-gradient(180deg, #ffd89b, #ff5e62);
     border-radius: 2px;
   }
 
-  /* 添加物资表单 */
+  /* 表单 */
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 10px;
   }
-  .form-row.triple { grid-template-columns: 1.2fr 1fr 1fr; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
   label {
     display: block;
-    font-size: 0.78rem;
-    opacity: 0.75;
-    margin-bottom: 4px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-bottom: 5px;
   }
   input, select {
     width: 100%;
-    padding: 9px 12px;
+    padding: 9px 11px;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 8px;
+    border-radius: 10px;
     color: #fff;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     outline: none;
     transition: all 0.2s;
   }
   input:focus, select:focus {
     border-color: #ffd89b;
     background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 0 3px rgba(255,216,155,0.15);
+  }
+  select option {
+    background: #1e2439;
+    color: #fff;
   }
   .btn {
-    padding: 10px 16px;
+    padding: 10px 14px;
     border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    border-radius: 10px;
+    font-size: 0.88rem;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
     color: #fff;
@@ -143,8 +157,9 @@
     background: linear-gradient(135deg, #667eea, #764ba2);
     width: 100%;
     margin-top: 6px;
+    padding: 11px 14px;
   }
-  .btn-primary:hover { box-shadow: 0 6px 18px rgba(102,126,234,0.45); transform: translateY(-1px); }
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.5); transform: translateY(-1px); }
   .btn-danger { background: linear-gradient(135deg, #ff5e62, #ff9966); }
   .btn-ghost {
     background: rgba(255,255,255,0.08);
@@ -153,25 +168,86 @@
   .btn:hover { opacity: 0.92; }
   .btn:active { transform: translateY(0); }
 
+  /* 图标选择器 */
+  .icon-picker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.12); }
+  .icon-btn.selected {
+    border-color: #ffd89b;
+    background: rgba(255,216,155,0.2);
+    box-shadow: 0 0 0 3px rgba(255,216,155,0.1);
+  }
+  .icon-custom {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  /* 分类筛选 */
+  .category-filter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .category-tag {
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .category-tag:hover { background: rgba(255,255,255,0.15); }
+  .category-tag.active {
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(255,94,98,0.3);
+  }
+  .category-tag .cat-count {
+    opacity: 0.7;
+    margin-left: 4px;
+    font-size: 0.7rem;
+  }
+
   /* 物资列表 */
   .item-list {
     max-height: 420px;
     overflow-y: auto;
-    margin-top: 6px;
   }
   .item-list::-webkit-scrollbar { width: 6px; }
-  .item-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  .item-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
   .item {
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 12px;
-    padding: 14px 16px;
+    border-radius: 13px;
+    padding: 14px;
     margin-bottom: 10px;
     transition: all 0.2s;
   }
   .item:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,216,155,0.3); }
-  .item.active { border-color: #ffd89b; box-shadow: 0 0 20px rgba(255,216,155,0.2); }
+  .item.active { border-color: #ffd89b; box-shadow: 0 0 20px rgba(255,216,155,0.15); }
 
   .item-header {
     display: flex;
@@ -180,22 +256,35 @@
     margin-bottom: 8px;
   }
   .item-name {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
-  .item-lang {
-    font-size: 0.75rem;
-    opacity: 0.6;
-    font-style: italic;
+  .item-icon { font-size: 1.3rem; }
+  .item-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .item-tag {
+    font-size: 0.68rem;
+    padding: 3px 7px;
+    border-radius: 10px;
+    background: rgba(102,126,234,0.3);
+    color: #a5b4fc;
+  }
+  .item-tag.island {
+    background: rgba(56,189,248,0.2);
+    color: #7dd3fc;
   }
   .item-meta {
-    font-size: 0.78rem;
-    opacity: 0.7;
+    font-size: 0.72rem;
+    opacity: 0.65;
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 10px;
   }
@@ -209,7 +298,7 @@
     text-align: center;
     padding: 12px;
     background: rgba(0,0,0,0.3);
-    border-radius: 10px;
+    border-radius: 11px;
     margin-bottom: 10px;
     letter-spacing: 2px;
   }
@@ -223,18 +312,18 @@
   .stats-mini {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 10px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
   }
   .stat-box {
     background: rgba(0,0,0,0.2);
-    padding: 6px 8px;
-    border-radius: 6px;
+    padding: 6px 4px;
+    border-radius: 8px;
     text-align: center;
   }
-  .stat-box .v { font-size: 0.95rem; font-weight: 600; color: #ffd89b; }
-  .stat-box .k { opacity: 0.65; font-size: 0.7rem; margin-top: 2px; }
+  .stat-box .v { font-size: 0.9rem; font-weight: 600; color: #ffd89b; }
+  .stat-box .k { opacity: 0.6; font-size: 0.65rem; margin-top: 2px; }
 
   .item-actions {
     display: flex;
@@ -243,19 +332,19 @@
   }
   .item-actions button {
     flex: 1;
-    padding: 7px 10px;
-    font-size: 0.82rem;
+    padding: 7px 8px;
+    font-size: 0.78rem;
+    border-radius: 9px;
   }
   .btn-record { background: linear-gradient(135deg, #11998e, #38ef7d); }
   .btn-reset { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); }
 
   /* 历史记录 */
-  .history-section { margin-top: 20px; }
   .history-summary {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
   @media (max-width: 640px) {
     .history-summary { grid-template-columns: repeat(2, 1fr); }
@@ -263,20 +352,20 @@
   .summary-card {
     background: linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.25));
     border: 1px solid rgba(255,255,255,0.1);
-    padding: 12px;
-    border-radius: 10px;
+    padding: 10px 6px;
+    border-radius: 11px;
     text-align: center;
   }
   .summary-card .num {
-    font-size: 1.4rem;
+    font-size: 1.15rem;
     font-weight: bold;
     color: #ffd89b;
     font-family: "Consolas", monospace;
   }
   .summary-card .lbl {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     opacity: 0.7;
-    margin-top: 4px;
+    margin-top: 3px;
   }
 
   .history-list {
@@ -284,7 +373,7 @@
     overflow-y: auto;
   }
   .history-list::-webkit-scrollbar { width: 6px; }
-  .history-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  .history-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
   .history-entry {
     display: grid;
@@ -292,36 +381,36 @@
     gap: 10px;
     padding: 10px 12px;
     background: rgba(255,255,255,0.03);
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 6px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     align-items: center;
   }
   .h-index {
-    width: 28px; height: 28px;
+    width: 26px; height: 26px;
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: bold;
   }
-  .h-info { line-height: 1.5; }
-  .h-info .name { color: #ffd89b; font-weight: 600; }
-  .h-info .detail { opacity: 0.7; font-size: 0.78rem; }
+  .h-info { line-height: 1.4; }
+  .h-info .name { color: #ffd89b; font-weight: 600; font-size: 0.82rem; }
+  .h-info .detail { opacity: 0.65; font-size: 0.72rem; }
   .h-duration {
     font-family: "Consolas", monospace;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #7dd3a0;
     font-weight: 600;
   }
 
   .empty {
     text-align: center;
-    padding: 32px 12px;
+    padding: 30px 10px;
     opacity: 0.5;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   /* 提醒面板 */
@@ -330,7 +419,7 @@
     overflow-y: auto;
   }
   .reminder-list::-webkit-scrollbar { width: 6px; }
-  .reminder-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  .reminder-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
 
   .reminder-item {
     display: grid;
@@ -340,216 +429,1286 @@
     padding: 10px 12px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 6px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     transition: all 0.2s;
   }
   .reminder-item.due { border-color: #ff5e62; background: rgba(255,94,98,0.12); animation: pulseBg 1s infinite; }
-  .reminder-item.lead { border-color: #ffd89b; }
+  .reminder-item.lead { border-color: #ffd89b; background: rgba(255,216,155,0.08); }
   @keyframes pulseBg {
     0%,100% { background: rgba(255,94,98,0.12); }
-    50% { background: rgba(255,94,98,0.25); }
+    50% { background: rgba(255,94,98,0.22); }
   }
-  .r-info .name { color: #ffd89b; font-weight: 600; }
-  .r-info .at { opacity: 0.65; font-size: 0.75rem; }
+  .r-info .name { color: #ffd89b; font-weight: 600; font-size: 0.85rem; }
+  .r-info .at { opacity: 0.6; font-size: 0.7rem; }
   .r-countdown {
     font-family: "Consolas", monospace;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     color: #7dd3a0;
-    min-width: 80px;
+    min-width: 70px;
     text-align: right;
   }
   .reminder-item.due .r-countdown { color: #ff5e62; }
   .r-tag {
-    font-size: 0.7rem;
-    padding: 2px 8px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
     border-radius: 10px;
     background: rgba(255,216,155,0.2);
     color: #ffd89b;
   }
 
-  /* 语言学习 */
-  .learn-panel {
-    background: linear-gradient(135deg, rgba(255,216,155,0.08), rgba(255,94,98,0.08));
-    border: 1px dashed rgba(255,216,155,0.3);
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 16px;
-  }
-  .learn-panel h3 {
-    font-size: 1rem;
-    margin-bottom: 10px;
-    color: #ffd89b;
-  }
-  .learn-word {
+  .settings-row {
     display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin-bottom: 6px;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
   }
-  .learn-word .cn { font-size: 1.15rem; font-weight: bold; }
-  .learn-word .en { font-style: italic; opacity: 0.8; }
-  .learn-phrase {
-    font-size: 0.85rem;
+  .settings-row label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.82rem;
     opacity: 0.85;
-    line-height: 1.6;
-    padding-left: 8px;
-    border-left: 2px solid rgba(255,216,155,0.4);
-    margin: 8px 0;
+    cursor: pointer;
+    margin-bottom: 0;
+  }
+  .settings-row input[type="checkbox"] {
+    width: auto;
+    accent-color: #ffd89b;
+  }
+  #notifyStatus {
+    font-size: 0.75rem;
+    opacity: 0.65;
+    margin-left: auto;
   }
 
-  .footer-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 14px;
+  /* 占位页 */
+  .placeholder {
+    text-align: center;
+    padding: 70px 20px;
+    color: rgba(255,255,255,0.4);
   }
-  .footer-actions .btn { flex: 1; }
+  .placeholder .ph-icon {
+    font-size: 3.5rem;
+    margin-bottom: 18px;
+    opacity: 0.5;
+  }
+  .placeholder .ph-title {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: rgba(255,255,255,0.6);
+  }
+  .placeholder .ph-desc {
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
 
   .toast {
     position: fixed;
-    bottom: 30px;
+    bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(20,24,45,0.95);
-    border: 1px solid #ffd89b;
-    padding: 12px 22px;
-    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(30,35,60,0.98), rgba(20,24,45,0.98));
+    border: 1.5px solid rgba(255,216,155,0.6);
+    padding: 12px 20px;
+    border-radius: 14px;
     font-size: 0.9rem;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,216,155,0.15);
     opacity: 0;
     transition: opacity 0.3s, transform 0.3s;
     pointer-events: none;
-    z-index: 999;
+    z-index: 9999;
+    max-width: 90%;
+    text-align: center;
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+  .toast.reminder {
+    border-color: #38ef7d;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(56,239,125,0.2);
+  }
+  .toast.reminder-soon {
+    border-color: #4facfe;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(79,172,254,0.2);
+  }
+
+  .update-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, #ff9966, #ff5e62);
+    color: #fff;
+    padding: 8px 16px;
+    text-align: center;
+    font-size: 0.85rem;
+    z-index: 1000;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+  .update-banner.show { transform: translateY(0); }
+  .update-banner button {
+    background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.78rem;
+  }
+
+  .version-tag {
+    font-size: 0.7rem;
+    opacity: 0.45;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== 炼药功能 ===== */
+  .potion-subnav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .subtab-btn {
+    flex: 1;
+    padding: 9px 10px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.82rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .subtab-btn.active {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(17,153,142,0.35);
+  }
+  .subtab-btn:hover:not(.active) { color: rgba(255,255,255,0.9); }
+  .subtab-content { display: none; }
+  .subtab-content.active { display: block; }
+
+  .recipe-select-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .recipe-select-row select { flex: 1; }
+
+  /* 炼丹炉 - 火位 */
+  .cauldron-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 600px) {
+    .cauldron-slots { grid-template-columns: repeat(2, 1fr); }
+  }
+  .fire-slot {
+    background: rgba(0,0,0,0.25);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .fire-slot[data-slot="0"] { border-color: rgba(255,200,100,0.3); }
+  .fire-slot[data-slot="1"] { border-color: rgba(255,140,50,0.4); }
+  .fire-slot[data-slot="2"] { border-color: rgba(255,80,80,0.5); }
+  .fire-slot[data-slot="3"] { border-color: rgba(200,100,255,0.5); }
+  .fire-slot.selected {
+    border-color: #ffd89b;
+    box-shadow: 0 0 15px rgba(255,216,155,0.25);
+    background: rgba(255,216,155,0.08);
+  }
+  .fire-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+  .fire-icon { font-size: 1.3rem; }
+  .fire-name { font-size: 0.75rem; opacity: 0.8; font-weight: 600; }
+
+  .fire-herb-slot {
+    min-height: 70px;
+    border: 2px dashed rgba(255,255,255,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.02);
+    padding: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-content: flex-start;
+  }
+  .fire-herb-slot:hover {
+    border-color: rgba(255,216,155,0.5);
+    background: rgba(255,216,155,0.05);
+  }
+  .fire-herb-slot.has-herb {
+    border-style: solid;
+    border-color: rgba(255,255,255,0.15);
+  }
+  .slot-empty {
+    font-size: 0.72rem;
+    opacity: 0.4;
+    width: 100%;
+    text-align: center;
+    align-self: center;
+  }
+  .slot-herbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+  }
+  .slot-herb-item {
+    background: rgba(255,216,155,0.15);
+    border: 1px solid rgba(255,216,155,0.3);
+    border-radius: 8px;
+    padding: 3px 5px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .slot-herb-item:hover {
+    background: rgba(255,94,98,0.2);
+    border-color: rgba(255,94,98,0.5);
+  }
+  .slot-herb-item .shi-icon { font-size: 0.9rem; }
+  .slot-herb-item .shi-name {
+    font-weight: 600;
+    color: #ffd89b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50px;
+  }
+  .slot-herb-item .shi-remove {
+    color: #ff5e62;
+    font-weight: bold;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .slot-herb-item:hover .shi-remove { opacity: 1; }
+
+  .cauldron-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .cauldron-actions .btn { flex: 1; }
+
+  /* 品质筛选 */
+  .herb-filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .quality-filter {
+    display: flex;
+    gap: 4px;
+  }
+  .q-btn {
+    padding: 5px 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+    border-radius: 14px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .q-btn:hover { background: rgba(255,255,255,0.1); }
+  .q-btn.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: #fff;
+  }
+  .q-btn.q-green.active { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .q-btn.q-blue.active { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .q-btn.q-purple.active { background: linear-gradient(135deg, #a855f7, #ec4899); }
+  .q-btn.q-special.active { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .herb-search {
+    flex: 1;
+    min-width: 120px;
+    max-width: 200px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  /* 药材网格 */
+  .herb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  .herb-grid::-webkit-scrollbar { width: 5px; }
+  .herb-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+  .herb-card {
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .herb-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .herb-card.q-green { border-color: rgba(56,239,125,0.4); }
+  .herb-card.q-blue { border-color: rgba(79,172,254,0.5); }
+  .herb-card.q-purple { border-color: rgba(168,85,247,0.5); }
+  .herb-card.q-special { border-color: rgba(245,158,11,0.5); }
+
+  .herb-card .hc-icon { font-size: 1.6rem; margin-bottom: 4px; }
+  .herb-card .hc-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+  .herb-card .hc-meta {
+    font-size: 0.62rem;
+    opacity: 0.6;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+  }
+  .herb-card .hc-delete {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(255,94,98,0.8);
+    color: #fff;
+    font-size: 0.7rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    line-height: 1;
+  }
+  .herb-card:hover .hc-delete { display: flex; }
+
+  .herb-icon-picker {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .h-icon-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    background: rgba(255,255,255,0.06);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .h-icon-btn:hover { background: rgba(255,255,255,0.12); }
+  .h-icon-btn.selected {
+    border-color: #ffd89b;
+    background: rgba(255,216,155,0.2);
+  }
+
+  /* 配方列表 */
+  .recipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .recipe-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.2s;
+  }
+  .recipe-item:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,216,155,0.3);
+  }
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .recipe-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffd89b;
+  }
+  .recipe-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .recipe-actions button {
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    border-radius: 8px;
+  }
+  .recipe-herbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .recipe-herb-slot {
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 0.65rem;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3px;
+  }
+  .recipe-herb-slot .rhs-fire {
+    font-size: 0.6rem;
+    opacity: 0.6;
+  }
+  .recipe-herb-slot .rhs-icon { font-size: 1.1rem; }
+  .recipe-herb-slot .rhs-name {
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+  .recipe-herb-slot.multi .rhs-herbs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-content: center;
+  }
+  .recipe-herb-slot.multi .rhs-herb-mini {
+    font-size: 0.85rem;
+    background: rgba(255,216,155,0.15);
+    border-radius: 4px;
+    padding: 2px 4px;
+    display: inline-block;
+  }
+  .recipe-herb-slot.multi .rhs-count {
+    font-size: 0.55rem;
+    opacity: 0.5;
+  }
+  .recipe-herb-slot.empty {
+    opacity: 0.3;
+    justify-content: center;
+  }
+
+  /* 药材计算 */
+  .calc-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .calc-row select {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+  .calc-count {
+    width: 70px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .calc-result {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 12px;
+    min-height: 60px;
+  }
+  .calc-empty {
+    text-align: center;
+    opacity: 0.5;
+    font-size: 0.85rem;
+    padding: 15px 0;
+  }
+  .calc-herb-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 6px;
+  }
+  .calc-herb-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .calc-herb-item.q-green { border-left: 3px solid #38ef7d; }
+  .calc-herb-item.q-blue { border-left: 3px solid #4facfe; }
+  .calc-herb-item.q-purple { border-left: 3px solid #a855f7; }
+  .calc-herb-item.q-special { border-left: 3px solid #f59e0b; }
+  .chi-icon { font-size: 1.1rem; }
+  .chi-info { flex: 1; min-width: 0; }
+  .chi-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chi-count {
+    font-size: 0.78rem;
+    color: #ffd89b;
+    font-weight: 700;
+  }
+
+  /* 导入导出 */
+  .import-export-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .import-export-row .btn { flex: 1; min-width: 100px; }
+  .import-textarea {
+    width: 100%;
+    min-height: 70px;
+    max-height: 120px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    font-size: 0.7rem;
+    font-family: monospace;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.8);
+    resize: vertical;
+    display: none;
+  }
+  .import-textarea.show { display: block; }
+
+  /* 地图 */
+  .map-container {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.3);
+  }
+  .map-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* 地图点位 */
+  .pin-form .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .pin-form .form-row > div {
+    flex: 1;
+    min-width: 80px;
+  }
+  .pin-icon-section { max-width: 200px; }
+  .pin-icon-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .pi-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pi-btn:hover { background: rgba(255,255,255,0.1); }
+  .pi-btn.selected {
+    background: rgba(255,216,155,0.2);
+    border-color: rgba(255,216,155,0.6);
+  }
+  .pin-filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pin-filter-row .herb-search { flex: 1; min-width: 120px; }
+  .pin-filter-row select {
+    min-width: 100px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  .pin-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  .pin-list::-webkit-scrollbar { width: 5px; }
+  .pin-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  .pin-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+  }
+  .pin-item:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.12);
+  }
+  .pin-icon { font-size: 1.5rem; }
+  .pin-info { flex: 1; min-width: 0; }
+  .pin-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .pin-coords {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pin-coords span {
+    background: rgba(255,255,255,0.08);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .pin-island {
+    background: rgba(255,216,155,0.15);
+    color: #ffd89b;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+  }
+  .pin-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .pin-actions .btn {
+    padding: 5px 10px;
+    font-size: 0.7rem;
+  }
+
+  /* 交互式地图 */
+  .map-page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 110px);
+    gap: 8px;
+  }
+  .map-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(20,24,45,0.8);
+    backdrop-filter: blur(8px);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .map-tool-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .map-tool-btn:hover { background: rgba(255,255,255,0.1); }
+  .map-tool-btn.active {
+    background: rgba(255,216,155,0.2);
+    border-color: rgba(255,216,155,0.6);
+  }
+  .map-zoom-info {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    min-width: 50px;
+    text-align: center;
+  }
+  .map-tool-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 4px;
+  }
+
+  .map-viewport {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .map-viewport:active { cursor: grabbing; }
+  .map-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+  .map-bg {
+    display: block;
+    pointer-events: none;
+    max-width: none;
+  }
+  .map-pins-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+  }
+  .map-pin:hover {
+    transform: translate(-50%, -100%) scale(1.2);
+  }
+  .map-pin .mp-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .map-pin .mp-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #fff;
+    background: rgba(0,0,0,0.7);
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .map-coords {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.6);
+    color: rgba(255,255,255,0.8);
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    pointer-events: none;
+  }
+  .map-side-panel {
+    display: none;
+  }
+  .map-panel-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 0.95rem;
+  }
+  .map-pin-list {
+    max-height: 180px;
+  }
+  .btn-full { width: 100%; }
+  
+  @media (min-width: 900px) {
+    .map-page {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .map-toolbar {
+      width: 100%;
+    }
+    .map-viewport {
+      flex: 1;
+      min-width: 0;
+    }
+    .map-side-panel {
+      display: block;
+      width: 280px;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+  }
 </style>
 </head>
 <body>
+<div class="update-banner" id="updateBanner">
+  <span id="updateBannerText">发现新版本，立即更新以获得最新功能</span>
+  <button id="btnUpdateNow">立即更新</button>
+  <button id="btnUpdateLater">稍后</button>
+</div>
+
 <div class="container">
   <header>
-    <h1 data-i18n="title">⚔ 游戏物资波动刷新计时器</h1>
-    <p data-i18n="subtitle">沉浸式语言学习 · 追踪物资刷新规律 · 计算波动平均时间</p>
-    <div class="lang-switch">
-      <button data-lang="zh" class="active">中文模式</button>
-      <button data-lang="en">English Mode</button>
-      <button data-lang="jp">日本語モード</button>
-    </div>
+    <h1>⚔ 游戏工具箱</h1>
+    <p>物资计时 · 炼药辅助 · 地图标记</p>
+    <div class="version-tag">v<span id="versionNum">1.2.0</span></div>
   </header>
 
-  <div class="grid">
-    <!-- 左列：添加 + 列表 -->
-    <div>
-      <div class="card">
-        <h2 data-i18n="addTitle">➕ 添加 / 自定义物资</h2>
-        <div class="form-row">
-          <div>
-            <label data-i18n="labelNameCN">物品名称 (中文)</label>
-            <input id="inputNameCN" placeholder="如：铁矿石">
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="timer">⏱ 计时</button>
+    <button class="tab-btn" data-tab="potion">🧪 炼药</button>
+    <button class="tab-btn" data-tab="map">🗺️ 地图</button>
+  </div>
+
+  <!-- 计时 tab -->
+  <div class="tab-content active" id="tab-timer">
+    <div class="grid">
+      <!-- 左列 -->
+      <div>
+        <div class="card">
+          <h2>➕ 添加物资</h2>
+          
+          <label>选择图标</label>
+          <div class="icon-picker" id="iconPicker">
+            <button type="button" class="icon-btn selected" data-icon="🎯">🎯</button>
+            <button type="button" class="icon-btn" data-icon="⛏️">⛏️</button>
+            <button type="button" class="icon-btn" data-icon="🪨">🪨</button>
+            <button type="button" class="icon-btn" data-icon="🌿">🌿</button>
+            <button type="button" class="icon-btn" data-icon="🌳">🌳</button>
+            <button type="button" class="icon-btn" data-icon="💎">💎</button>
+            <button type="button" class="icon-btn" data-icon="🗡️">🗡️</button>
+            <button type="button" class="icon-btn" data-icon="🏹">🏹</button>
+            <button type="button" class="icon-btn" data-icon="🦴">🦴</button>
+            <button type="button" class="icon-btn" data-icon="🍖">🍖</button>
+            <button type="button" class="icon-btn" data-icon="🧪">🧪</button>
+            <button type="button" class="icon-btn" data-icon="📦">📦</button>
+            <input type="text" id="customIcon" class="icon-custom" placeholder="+" maxlength="2" title="自定义图标">
           </div>
-          <div>
-            <label data-i18n="labelNameEN">Item Name (English)</label>
-            <input id="inputNameEN" placeholder="e.g. Iron Ore">
+
+          <div class="form-row">
+            <div>
+              <label>物品名称</label>
+              <input id="inputName" placeholder="如：铁矿石">
+            </div>
+            <div>
+              <label>分类</label>
+              <select id="inputCategory">
+                <option value="">-- 选择 --</option>
+                <option value="矿石">矿石</option>
+                <option value="草药">草药</option>
+                <option value="木材">木材</option>
+                <option value="材料">材料</option>
+                <option value="装备">装备</option>
+                <option value="食物">食物</option>
+                <option value="__custom__">+ 自定义</option>
+              </select>
+            </div>
+          </div>
+          <div id="customCategoryWrapper" style="display:none; margin-bottom:8px;">
+            <input id="inputCustomCategory" placeholder="输入自定义分类名称">
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>岛屿</label>
+              <select id="inputIsland">
+                <option value="">-- 选择 --</option>
+                <option value="1岛">1岛</option>
+                <option value="2岛">2岛</option>
+                <option value="3岛">3岛</option>
+                <option value="4岛">4岛</option>
+                <option value="5岛">5岛</option>
+                <option value="6岛">6岛</option>
+                <option value="7岛">7岛</option>
+                <option value="8岛">8岛</option>
+                <option value="9岛">9岛</option>
+                <option value="10岛">10岛</option>
+              </select>
+            </div>
+            <div>
+              <label>参考时长 (秒)</label>
+              <input id="inputBase" type="number" min="1" value="600">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label>最短刷新 (秒)</label>
+              <input id="inputMin" type="number" min="1" value="300">
+            </div>
+            <div>
+              <label>最长刷新 (秒)</label>
+              <input id="inputMax" type="number" min="1" value="900">
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="btnAdd">＋ 添加并开启计时</button>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h2>📋 物资列表</h2>
+          <div class="category-filter" id="categoryFilter"></div>
+          <div class="item-list" id="itemList">
+            <div class="empty">暂无物资，快添加一个吧！</div>
           </div>
         </div>
-        <div class="form-row triple">
-          <div>
-            <label data-i18n="labelBase">基础刷新时长 (秒)</label>
-            <input id="inputBase" type="number" min="1" value="600">
-          </div>
-          <div>
-            <label data-i18n="labelMin">最小波动 (秒)</label>
-            <input id="inputMin" type="number" min="0" value="300">
-          </div>
-          <div>
-            <label data-i18n="labelMax">最大波动 (秒)</label>
-            <input id="inputMax" type="number" min="0" value="900">
-          </div>
-        </div>
-        <button class="btn btn-primary" id="btnAdd" data-i18n="btnAdd">＋ 添加物资并开启波动计时</button>
       </div>
 
-      <div class="card" style="margin-top:20px;">
-        <h2 data-i18n="listTitle">📋 物资计时器列表</h2>
-        <div class="item-list" id="itemList">
-          <div class="empty" data-i18n="emptyList">暂无物资，快添加一个吧！</div>
+      <!-- 右列 -->
+      <div>
+        <div class="card">
+          <h2>📊 历史统计</h2>
+          <div class="history-summary">
+            <div class="summary-card">
+              <div class="num" id="totalRecords">0</div>
+              <div class="lbl">总记录</div>
+            </div>
+            <div class="summary-card">
+              <div class="num" id="avgDuration">00:00</div>
+              <div class="lbl">平均时长</div>
+            </div>
+            <div class="summary-card">
+              <div class="num" id="minDuration">--</div>
+              <div class="lbl">最短</div>
+            </div>
+            <div class="summary-card">
+              <div class="num" id="maxDuration">--</div>
+              <div class="lbl">最长</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+            <select id="filterItem" style="max-width:180px; font-size:0.8rem;">
+              <option value="__all__">全部物资</option>
+            </select>
+            <button class="btn btn-ghost" id="btnClearHistory" style="padding:6px 10px; font-size:0.78rem;">清除</button>
+          </div>
+
+          <div class="history-list" id="historyList">
+            <div class="empty">暂无记录</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px;">
+          <h2>🔔 下次刷新提醒</h2>
+          <div class="settings-row">
+            <button class="btn btn-ghost" id="btnEnableNotify" style="padding:6px 12px; font-size:0.8rem;">开启通知</button>
+            <label><input type="checkbox" id="chkLead" checked> 提前10秒提醒</label>
+            <label><input type="checkbox" id="chkAutoUpdate" checked> 自动更新</label>
+            <span id="notifyStatus"></span>
+          </div>
+          <div class="reminder-list" id="reminderList">
+            <div class="empty">暂无物资</div>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- 右列：历史 + 学习 -->
-    <div>
-      <div class="card history-section">
-        <h2 data-i18n="historyTitle">📊 波动刷新历史 · 统计分析</h2>
-        <div class="history-summary">
-          <div class="summary-card">
-            <div class="num" id="totalRecords">0</div>
-            <div class="lbl" data-i18n="statTotal">总记录数</div>
-          </div>
-          <div class="summary-card">
-            <div class="num" id="avgDuration">00:00</div>
-            <div class="lbl" data-i18n="statAvg">平均波动时长</div>
-          </div>
-          <div class="summary-card">
-            <div class="num" id="minDuration">--</div>
-            <div class="lbl" data-i18n="statMin">最短时间</div>
-          </div>
-          <div class="summary-card">
-            <div class="num" id="maxDuration">--</div>
-            <div class="lbl" data-i18n="statMax">最长时间</div>
-          </div>
-        </div>
+  <!-- 炼药 tab -->
+  <div class="tab-content" id="tab-potion">
+    <div class="potion-subnav">
+      <button class="subtab-btn active" data-subtab="cauldron">🔥 炼丹炉</button>
+      <button class="subtab-btn" data-subtab="herbs">🌿 药材库</button>
+      <button class="subtab-btn" data-subtab="recipes">📜 配方</button>
+    </div>
 
-        <div style="display:flex; gap:8px; margin-bottom:10px; align-items:center;">
-          <select id="filterItem" style="max-width:200px;">
-            <option value="__all__" data-i18n="filterAll">全部物资</option>
+    <!-- 炼丹炉子页 -->
+    <div class="subtab-content active" id="subtab-cauldron">
+      <div class="card">
+        <h2>🔥 炼丹炉</h2>
+        <div class="recipe-select-row">
+          <select id="cauldronRecipe">
+            <option value="">-- 选择配方 --</option>
           </select>
-          <button class="btn btn-ghost" id="btnClearHistory" data-i18n="btnClearHistory">清除筛选下的历史</button>
+          <button class="btn btn-ghost" id="btnClearCauldron" style="padding:8px 12px;">清空</button>
         </div>
 
-        <div class="history-list" id="historyList">
-          <div class="empty" data-i18n="emptyHistory">尚无波动刷新记录</div>
+        <div class="cauldron-slots">
+          <div class="fire-slot" data-slot="0">
+            <div class="fire-label">
+              <span class="fire-icon">🕯️</span>
+              <span class="fire-name">文火</span>
+            </div>
+            <div class="fire-herb-slot" data-herb-slot="0">
+              <span class="slot-empty">+ 放入药材</span>
+            </div>
+          </div>
+          <div class="fire-slot" data-slot="1">
+            <div class="fire-label">
+              <span class="fire-icon">🔥</span>
+              <span class="fire-name">臣火</span>
+            </div>
+            <div class="fire-herb-slot" data-herb-slot="1">
+              <span class="slot-empty">+ 放入药材</span>
+            </div>
+          </div>
+          <div class="fire-slot" data-slot="2">
+            <div class="fire-label">
+              <span class="fire-icon">🔴</span>
+              <span class="fire-name">君火</span>
+            </div>
+            <div class="fire-herb-slot" data-herb-slot="2">
+              <span class="slot-empty">+ 放入药材</span>
+            </div>
+          </div>
+          <div class="fire-slot" data-slot="3">
+            <div class="fire-label">
+              <span class="fire-icon">⚡</span>
+              <span class="fire-name">神火</span>
+            </div>
+            <div class="fire-herb-slot" data-herb-slot="3">
+              <span class="slot-empty">+ 放入药材</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cauldron-actions">
+          <button class="btn btn-primary" id="btnSaveRecipe">💾 保存为配方</button>
         </div>
       </div>
 
-      <div class="card" style="margin-top:20px;">
-        <h2 data-i18n="reminderTitle">🔔 预计下次刷新 · 提醒面板</h2>
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap;">
-          <button class="btn btn-ghost" id="btnEnableNotify" data-i18n="btnEnableNotify">开启系统通知</button>
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; opacity:0.85; cursor:pointer;">
-            <input type="checkbox" id="chkSound" checked> <span data-i18n="lblSound">提示音</span>
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; opacity:0.85; cursor:pointer;">
-            <input type="checkbox" id="chkLead" checked> <span data-i18n="lblLead">到点前 10 秒提醒</span>
-          </label>
-          <span id="notifyStatus" style="font-size:0.78rem; opacity:0.7; margin-left:auto;"></span>
+      <div class="card" style="margin-top:14px;">
+        <h2>🌿 选择药材</h2>
+        <div class="herb-filter-row">
+          <div class="quality-filter">
+            <button class="q-btn active" data-quality="all">全部</button>
+            <button class="q-btn q-green" data-quality="green">绿</button>
+            <button class="q-btn q-blue" data-quality="blue">蓝</button>
+            <button class="q-btn q-purple" data-quality="purple">紫</button>
+            <button class="q-btn q-special" data-quality="special">特殊</button>
+          </div>
+          <input type="text" id="herbSearch" placeholder="搜索药材..." class="herb-search">
         </div>
-        <div class="reminder-list" id="reminderList">
-          <div class="empty" data-i18n="emptyReminder">尚无物资，添加后将在此显示下次刷新倒计时</div>
+        <div class="herb-grid" id="herbGrid"></div>
+      </div>
+    </div>
+
+    <!-- 药材库子页 -->
+    <div class="subtab-content" id="subtab-herbs">
+      <div class="card">
+        <h2>➕ 添加特殊药材</h2>
+        <div class="form-row">
+          <div>
+            <label>药材名称</label>
+            <input id="inputHerbName" placeholder="如：龙涎草">
+          </div>
+          <div>
+            <label>选择图标</label>
+            <div class="herb-icon-picker">
+              <button type="button" class="h-icon-btn selected" data-icon="🌿">🌿</button>
+              <button type="button" class="h-icon-btn" data-icon="🍄">🍄</button>
+              <button type="button" class="h-icon-btn" data-icon="🌸">🌸</button>
+              <button type="button" class="h-icon-btn" data-icon="🍀">🍀</button>
+              <button type="button" class="h-icon-btn" data-icon="🌺">🌺</button>
+              <button type="button" class="h-icon-btn" data-icon="💎">💎</button>
+              <input type="text" id="customHerbIcon" class="icon-custom" placeholder="+" maxlength="2">
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div>
+            <label>品质</label>
+            <select id="inputHerbQuality">
+              <option value="green">绿色</option>
+              <option value="blue">蓝色</option>
+              <option value="purple">紫色</option>
+              <option value="special">特殊</option>
+            </select>
+          </div>
+          <div>
+            <label>五行属性</label>
+            <select id="inputHerbElement">
+              <option value="">无</option>
+              <option value="金">金</option>
+              <option value="木">木</option>
+              <option value="水">水</option>
+              <option value="火">火</option>
+              <option value="土">土</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btnAddHerb">＋ 添加药材</button>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2>📚 药材库</h2>
+        <div class="herb-filter-row">
+          <div class="quality-filter">
+            <button class="q-btn active" data-quality2="all">全部</button>
+            <button class="q-btn q-green" data-quality2="green">绿</button>
+            <button class="q-btn q-blue" data-quality2="blue">蓝</button>
+            <button class="q-btn q-purple" data-quality2="purple">紫</button>
+            <button class="q-btn q-special" data-quality2="special">特殊</button>
+          </div>
+        </div>
+        <div class="herb-grid" id="herbLibraryGrid"></div>
+      </div>
+    </div>
+
+    <!-- 配方子页 -->
+    <div class="subtab-content" id="subtab-recipes">
+      <div class="card">
+        <h2>🧮 药材计算</h2>
+        <div class="calc-row">
+          <select id="calcRecipe">
+            <option value="">-- 选择配方 --</option>
+          </select>
+          <input type="number" id="calcCount" value="1" min="1" max="999" class="calc-count">
+          <button class="btn btn-primary" id="btnCalc">计算</button>
+        </div>
+        <div class="calc-result" id="calcResult">
+          <div class="calc-empty">选择配方并输入数量，计算所需药材</div>
         </div>
       </div>
 
-      <div class="card" style="margin-top:20px;">
-        <div class="learn-panel">
-          <h3 data-i18n="learnTitle">🎓 今日语言学习卡片</h3>
-          <div id="learnContent">
-            <div class="learn-word">
-              <span class="cn">波动刷新</span>
-              <span class="en">Wave Refresh / Fluctuation</span>
-            </div>
-            <div class="learn-phrase">
-              "The spawn timing of resources fluctuates within a certain range, making each harvest feel unique."
-              <br>物资的刷新时间在一定范围内波动，让每次采集都充满变数。
-            </div>
-            <div class="learn-word">
-              <span class="cn">刷新间隔</span>
-              <span class="en">Respawn Interval</span>
-            </div>
-            <div class="learn-phrase">
-              "Track the interval between spawns to estimate when the next resource will appear."
-              <br>追踪刷新之间的间隔，以预估下一个物资何时出现。
-            </div>
+      <div class="card" style="margin-top:14px;">
+        <h2>📤 导入 / 导出</h2>
+        <div class="import-export-row">
+          <button class="btn btn-ghost" id="btnExportAll">📤 导出全部配方</button>
+          <button class="btn btn-ghost" id="btnImport">📥 导入配方</button>
+        </div>
+        <textarea id="importTextarea" class="import-textarea" placeholder="粘贴配方代码到此处..."></textarea>
+        <div class="import-export-row" style="margin-top:8px;">
+          <button class="btn btn-primary" id="btnDoImport" style="display:none;">确认导入</button>
+          <button class="btn btn-ghost" id="btnCopyExport" style="display:none;">复制代码</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2>📜 配方列表</h2>
+        <div class="recipe-list" id="recipeList">
+          <div class="empty">暂无配方</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 地图 tab -->
+  <div class="tab-content" id="tab-map">
+    <div class="map-page">
+      <div class="map-toolbar">
+        <button class="map-tool-btn" id="btnMapZoomIn" title="放大">➕</button>
+        <button class="map-tool-btn" id="btnMapZoomOut" title="缩小">➖</button>
+        <button class="map-tool-btn" id="btnMapReset" title="重置">🔄</button>
+        <div class="map-zoom-info" id="mapZoomInfo">100%</div>
+        <div class="map-tool-divider"></div>
+        <button class="map-tool-btn" id="btnAddPinOnMap" title="点击地图添加点位">📍</button>
+        <button class="map-tool-btn" id="btnUploadMapBg" title="上传地图背景">🖼️</button>
+        <input type="file" id="mapBgInput" accept="image/*" style="display:none;">
+      </div>
+      
+      <div class="map-viewport" id="mapViewport">
+        <div class="map-canvas" id="mapCanvas">
+          <img class="map-bg" id="mapBgImg" style="display:none;" alt="地图背景">
+          <div class="map-pins-layer" id="mapPinsLayer"></div>
+          <div class="map-coords" id="mapCoords">0, 0</div>
+        </div>
+      </div>
+      
+      <div class="map-side-panel">
+        <div class="card map-panel-card">
+          <h3>📍 添加点位</h3>
+          <div class="pin-icon-picker" id="pinIconPicker2" style="margin-bottom:8px;">
+            <button type="button" class="pi-btn selected" data-icon="📍">📍</button>
+            <button type="button" class="pi-btn" data-icon="⭐">⭐</button>
+            <button type="button" class="pi-btn" data-icon="💎">💎</button>
+            <button type="button" class="pi-btn" data-icon="🏠">🏠</button>
+            <button type="button" class="pi-btn" data-icon="⚔️">⚔️</button>
+            <button type="button" class="pi-btn" data-icon="🎯">🎯</button>
+            <button type="button" class="pi-btn" data-icon="🗺️">🗺️</button>
+            <button type="button" class="pi-btn" data-icon="🔮">🔮</button>
+          </div>
+          <input type="text" id="inputPinName2" placeholder="点位名称" style="margin-bottom:6px;">
+          <select id="inputPinIsland2" style="margin-bottom:6px;">
+            <option value="">选择岛屿（可选）</option>
+            <option value="1岛">1岛</option>
+            <option value="2岛">2岛</option>
+            <option value="3岛">3岛</option>
+            <option value="4岛">4岛</option>
+            <option value="5岛">5岛</option>
+            <option value="6岛">6岛</option>
+            <option value="7岛">7岛</option>
+            <option value="8岛">8岛</option>
+            <option value="9岛">9岛</option>
+            <option value="10岛">10岛</option>
+          </select>
+          <div class="form-row" style="margin:6px 0;">
+            <div><label>X</label><input type="number" id="inputPinX2"></div>
+            <div><label>Y</label><input type="number" id="inputPinY2"></div>
+          </div>
+          <button class="btn btn-primary btn-full" id="btnAddPin2">＋ 添加点位</button>
+        </div>
+        
+        <div class="card map-panel-card" style="margin-top:10px;">
+          <h3>🗂️ 点位列表</h3>
+          <input type="text" id="pinSearch2" placeholder="搜索点位..." style="margin-bottom:6px;">
+          <div class="pin-list map-pin-list" id="pinList2">
+            <div class="empty">暂无点位</div>
+          </div>
+        </div>
+        
+        <div class="card map-panel-card" style="margin-top:10px;">
+          <h3>📤 导入/导出</h3>
+          <div class="import-export-row">
+            <button class="btn btn-ghost" id="btnExportPins2" style="flex:1;">📤 导出</button>
+            <button class="btn btn-ghost" id="btnImportPins2" style="flex:1;">📥 导入</button>
+          </div>
+          <textarea id="pinImportTextarea2" class="import-textarea" placeholder="粘贴点位代码..."></textarea>
+          <div class="import-export-row" style="margin-top:6px;">
+            <button class="btn btn-primary" id="btnDoImportPins2" style="display:none;flex:1;">确认导入</button>
+            <button class="btn btn-ghost" id="btnCopyPinExport2" style="display:none;flex:1;">复制</button>
           </div>
         </div>
       </div>
@@ -560,16 +1719,60 @@
 <div class="toast" id="toast"></div>
 
 <script>
-/* ======================== 数据层 ======================== */
-const STORAGE_KEY = "game_refresh_timer_v1";
+const STORAGE_KEY = "game_toolbox_v3";
+const FIRE_NAMES = ["文火", "臣火", "君火", "神火"];
+const FIRE_ICONS = ["🕯️", "🔥", "🔴", "⚡"];
+const QUALITY_NAMES = { green: "绿色", blue: "蓝色", purple: "紫色", special: "特殊" };
+const ELEMENTS = ["金", "木", "水", "火", "土"];
+
+function getDefaultHerbs() {
+  const herbs = [];
+  let id = 0;
+  const qualities = [
+    { key: "green", icon: "🌿", prefix: "青" },
+    { key: "blue", icon: "💎", prefix: "蓝" },
+    { key: "purple", icon: "🔮", prefix: "紫" }
+  ];
+  const elementIcons = { "金": "⚔️", "木": "🌳", "水": "💧", "火": "🔥", "土": "🪨" };
+  qualities.forEach(q => {
+    ELEMENTS.forEach(el => {
+      herbs.push({
+        id: "herb_preset_" + (id++),
+        name: q.prefix + el + "草",
+        icon: elementIcons[el],
+        quality: q.key,
+        element: el,
+        preset: true
+      });
+    });
+  });
+  return herbs;
+}
+
 let state = {
-  items: [],       // {id, nameCN, nameEN, base, min, max, nextAt, createdAt, lastRecordAt}
-  history: [],     // {id, itemId, itemName, durationSec, recordedAt, baseUsed}
-  lang: "zh",
-  settings: { sound: true, lead: true, notif: false }
+  items: [],
+  history: [],
+  categories: ["矿石","草药","木材","材料","装备","食物"],
+  currentCategory: "__all__",
+  selectedIcon: "🎯",
+  currentTab: "timer",
+  settings: { lead: true, notif: false, autoCheckUpdate: true },
+  potion: {
+    currentSubtab: "cauldron",
+    herbs: getDefaultHerbs(),
+    customHerbs: [],
+    recipes: [],
+    cauldronSlots: [[], [], [], []],
+    selectedSlot: 0,
+    filterQuality: "all",
+    filterQuality2: "all",
+    searchQuery: "",
+    selectedHerbIcon: "🌿"
+  },
+  mapPins: [],
+  mapBgData: null
 };
 
-// 已为本会话提醒过/触发过的物资 id，避免重复推送
 const firedSet = new Set();
 
 function load() {
@@ -579,19 +1782,73 @@ function load() {
       const d = JSON.parse(raw);
       state.items = d.items || [];
       state.history = d.history || [];
-      state.lang = d.lang || "zh";
-      if (d.settings) state.settings = Object.assign(state.settings, d.settings);
+      state.categories = d.categories || ["矿石","草药","木材","材料","装备","食物"];
+      state.currentCategory = d.currentCategory || "__all__";
+      state.currentTab = d.currentTab || "timer";
+      state.settings = Object.assign({ lead: true, notif: false, autoCheckUpdate: true }, d.settings || {});
+      if (d.potion) {
+        state.potion.customHerbs = d.potion.customHerbs || [];
+        state.potion.recipes = d.potion.recipes || [];
+        if (d.potion.cauldronSlots && Array.isArray(d.potion.cauldronSlots[0])) {
+          state.potion.cauldronSlots = d.potion.cauldronSlots;
+        } else {
+          state.potion.cauldronSlots = (d.potion.cauldronSlots || [null, null, null, null]).map(s => s ? [s] : []);
+        }
+        state.potion.currentSubtab = d.potion.currentSubtab || "cauldron";
+      }
+      if (d.potion?.herbs && Array.isArray(d.potion.herbs) && d.potion.herbs.length > 0) {
+        state.potion.herbs = d.potion.herbs;
+      }
+      if (d.mapPins && Array.isArray(d.mapPins)) {
+        state.mapPins = d.mapPins;
+      }
+      if (d.mapBgData) {
+        state.mapBgData = d.mapBgData;
+      }
+    }
+    state.items.forEach(it => {
+      if (it.base == null) it.base = 600;
+      if (it.min == null) it.min = it.base ? Math.floor(it.base * 0.7) : 300;
+      if (it.max == null) it.max = it.base ? Math.floor(it.base * 1.3) : 900;
+    });
+    const v2 = localStorage.getItem("game_refresh_timer_v2");
+    if (v2 && state.items.length === 0) {
+      try {
+        const old = JSON.parse(v2);
+        state.items = (old.items || []).map(it => ({
+          ...it,
+          icon: it.icon || "🎯",
+          category: it.category || "材料",
+          island: it.island || "",
+          base: it.base || 600,
+          min: it.min != null ? it.min : (it.base ? Math.floor(it.base * 0.7) : 300),
+          max: it.max != null ? it.max : (it.base ? Math.floor(it.base * 1.3) : 900)
+        }));
+        state.history = old.history || [];
+      } catch(e) {}
+    }
+    const v1 = localStorage.getItem("game_refresh_timer_v1");
+    if (v1 && state.items.length === 0) {
+      try {
+        const old = JSON.parse(v1);
+        state.items = (old.items || []).map(it => ({
+          ...it, name: it.nameCN || it.nameEN || "未命名",
+          icon: "🎯", category: "材料", island: "",
+          base: it.baseTime || 600,
+          min: it.baseTime ? Math.floor(it.baseTime * 0.7) : 300,
+          max: it.baseTime ? Math.floor(it.baseTime * 1.3) : 900
+        }));
+        state.history = old.history || [];
+      } catch(e) {}
     }
   } catch(e) { console.warn(e); }
 }
 function save() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch(e) { console.warn(e); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
 }
 
-/* ======================== 工具函数 ======================== */
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
 function formatDuration(sec) {
   sec = Math.max(0, Math.floor(sec));
   const h = Math.floor(sec / 3600);
@@ -600,10 +1857,12 @@ function formatDuration(sec) {
   if (h > 0) return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
   return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
 }
+
 function formatTime(ts) {
   const d = new Date(ts);
-  return `${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}:${String(d.getSeconds()).padStart(2,"0")}`;
+  return `${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
 }
+
 function toast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg;
@@ -612,159 +1871,106 @@ function toast(msg) {
   toast._t = setTimeout(() => t.classList.remove("show"), 1800);
 }
 
-/* 生成波动时间：在 [min, max] 区间内随机，若越界则钳制 */
 function randomWaveTime(item) {
   const lo = Math.min(item.min, item.max);
   const hi = Math.max(item.min, item.max);
   return Math.floor(lo + Math.random() * (hi - lo + 1));
 }
 
-/* ======================== 渲染 ======================== */
-const i18n = {
-  zh: {
-    title: "⚔ 游戏物资波动刷新计时器",
-    subtitle: "沉浸式语言学习 · 追踪物资刷新规律 · 计算波动平均时间",
-    addTitle: "➕ 添加 / 自定义物资",
-    labelNameCN: "物品名称 (中文)",
-    labelNameEN: "物品名称 (英文)",
-    labelBase: "基础刷新时长 (秒)",
-    labelMin: "最小波动 (秒)",
-    labelMax: "最大波动 (秒)",
-    btnAdd: "＋ 添加物资并开启波动计时",
-    listTitle: "📋 物资计时器列表",
-    emptyList: "暂无物资，快添加一个吧！",
-    historyTitle: "📊 波动刷新历史 · 统计分析",
-    statTotal: "总记录数",
-    statAvg: "平均波动时长",
-    statMin: "最短时间",
-    statMax: "最长时间",
-    filterAll: "全部物资",
-    btnClearHistory: "清除筛选下的历史",
-    emptyHistory: "尚无波动刷新记录",
-    reminderTitle: "🔔 预计下次刷新 · 提醒面板",
-    btnEnableNotify: "开启系统通知",
-    lblSound: "提示音",
-    lblLead: "到点前 10 秒提醒",
-    emptyReminder: "尚无物资，添加后将在此显示下次刷新倒计时",
-    tagDue: "已刷新",
-    tagLead: "即将刷新",
-    learnTitle: "🎓 今日语言学习卡片"
-  },
-  en: {
-    title: "⚔ Game Item Wave Refresh Timer",
-    subtitle: "Immersive language learning · Track spawn patterns · Calculate average fluctuation",
-    addTitle: "➕ Add / Customize Item",
-    labelNameCN: "Name (CN)",
-    labelNameEN: "Name (EN)",
-    labelBase: "Base Duration (s)",
-    labelMin: "Min Fluctuation (s)",
-    labelMax: "Max Fluctuation (s)",
-    btnAdd: "＋ Add Item & Start Wave Timer",
-    listTitle: "📋 Item Timers",
-    emptyList: "No items yet — add one above!",
-    historyTitle: "📊 Wave History · Statistics",
-    statTotal: "Total Records",
-    statAvg: "Avg Duration",
-    statMin: "Shortest",
-    statMax: "Longest",
-    filterAll: "All Items",
-    btnClearHistory: "Clear Filtered History",
-    emptyHistory: "No wave records yet",
-    reminderTitle: "🔔 Next Spawn · Reminder Panel",
-    btnEnableNotify: "Enable System Notification",
-    lblSound: "Sound",
-    lblLead: "Lead 10s Alert",
-    emptyReminder: "No items yet — next spawn countdowns will appear here",
-    tagDue: "Spawned",
-    tagLead: "Soon",
-    learnTitle: "🎓 Today's Language Card"
-  },
-  jp: {
-    title: "⚔ ゲーム素材 波動リフレッシュタイマー",
-    subtitle: "没入型言語学習 · 出現パターン追跡 · 平均波動時間の計算",
-    addTitle: "➕ 素材を追加 / カスタマイズ",
-    labelNameCN: "アイテム名 (中国語)",
-    labelNameEN: "Item Name (英語)",
-    labelBase: "基本リフレッシュ (秒)",
-    labelMin: "最小波動 (秒)",
-    labelMax: "最大波動 (秒)",
-    btnAdd: "＋ 素材を追加して波動計測開始",
-    listTitle: "📋 素材タイマー一覧",
-    emptyList: "素材がありません。追加してみましょう！",
-    historyTitle: "📊 波動履歴 · 統計",
-    statTotal: "総記録数",
-    statAvg: "平均波動時間",
-    statMin: "最短時間",
-    statMax: "最長時間",
-    filterAll: "すべての素材",
-    btnClearHistory: "フィルタ内履歴クリア",
-    emptyHistory: "波動記録はまだありません",
-    reminderTitle: "🔔 次回出現 · リマインダ",
-    btnEnableNotify: "システム通知を有効化",
-    lblSound: "音",
-    lblLead: "10秒前通知",
-    emptyReminder: "素材がありません — 次回出現のカウントダウンがここに表示されます",
-    tagDue: "出現",
-    tagLead: "もうすぐ",
-    learnTitle: "🎓 今日の言語カード"
-  }
-};
+function escapeHtml(s) {
+  return String(s||"").replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
 
-function applyI18n() {
-  const dict = i18n[state.lang] || i18n.zh;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const k = el.getAttribute("data-i18n");
-    if (dict[k]) el.textContent = dict[k];
+/* Tab 切换 */
+function switchTab(tab) {
+  state.currentTab = tab;
+  save();
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.tab === tab);
   });
-  document.querySelectorAll(".lang-switch button").forEach(b => {
-    b.classList.toggle("active", b.dataset.lang === state.lang);
+  document.querySelectorAll(".tab-content").forEach(c => {
+    c.classList.toggle("active", c.id === "tab-" + tab);
   });
 }
 
+/* 分类筛选 */
+function renderCategoryFilter() {
+  const wrap = document.getElementById("categoryFilter");
+  const cats = ["__all__", ...state.categories];
+  const counts = {};
+  state.items.forEach(it => { counts[it.category] = (counts[it.category] || 0) + 1; });
+  
+  wrap.innerHTML = cats.map(c => {
+    const label = c === "__all__" ? "全部" : c;
+    const count = c === "__all__" ? state.items.length : (counts[c] || 0);
+    return `<span class="category-tag ${state.currentCategory === c ? 'active' : ''}" data-cat="${c}">${escapeHtml(label)}<span class="cat-count">${count}</span></span>`;
+  }).join("");
+  
+  wrap.querySelectorAll(".category-tag").forEach(tag => {
+    tag.addEventListener("click", () => {
+      state.currentCategory = tag.dataset.cat;
+      save();
+      renderItemList();
+      renderCategoryFilter();
+    });
+  });
+}
+
+/* 物资列表 */
 function renderItemList() {
   const list = document.getElementById("itemList");
-  if (state.items.length === 0) {
-    const dict = i18n[state.lang] || i18n.zh;
-    list.innerHTML = `<div class="empty">${dict.emptyList}</div>`;
+  let items = state.items;
+  if (state.currentCategory !== "__all__") {
+    items = items.filter(it => it.category === state.currentCategory);
+  }
+  
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty">${state.currentCategory === "__all__" ? "暂无物资，快添加一个吧！" : "该分类下暂无物资"}</div>`;
     return;
   }
-  list.innerHTML = state.items.map(it => {
+  
+  list.innerHTML = items.map(it => {
     const now = Date.now();
     const remain = Math.max(0, (it.nextAt - now) / 1000);
     const warn = remain <= 30 && remain > 0;
     const good = it.nextAt <= now;
-    const displayName = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
-    const otherName = state.lang === "en" ? it.nameCN : it.nameEN;
+    const lo = Math.min(it.min, it.max);
+    const hi = Math.max(it.min, it.max);
     return `
       <div class="item ${good ? 'active' : ''}" data-id="${it.id}">
         <div class="item-header">
-          <div class="item-name">🎯 ${escapeHtml(displayName)}
-            ${otherName ? `<span class="item-lang">/ ${escapeHtml(otherName)}</span>` : ''}
+          <div class="item-name">
+            <span class="item-icon">${escapeHtml(it.icon || '🎯')}</span>
+            ${escapeHtml(it.name)}
+          </div>
+          <div class="item-tags">
+            ${it.category ? `<span class="item-tag">${escapeHtml(it.category)}</span>` : ''}
+            ${it.island ? `<span class="item-tag island">🏝 ${escapeHtml(it.island)}</span>` : ''}
           </div>
         </div>
         <div class="item-meta">
-          <span>基础 ${it.base}s</span>
-          <span>波动 ${Math.min(it.min,it.max)} ~ ${Math.max(it.min,it.max)}s</span>
-          <span>下次刷新: ${formatTime(it.nextAt)}</span>
+          <span>${lo}~${hi}秒</span>
+          <span>下次: ${formatTime(it.nextAt)}</span>
         </div>
         <div class="timer-display ${warn ? 'warn' : ''} ${good ? 'good' : ''}" data-timer="${it.id}">
-          ${good ? "⏰ 已刷新！" : formatDuration(remain)}
+          ${good ? "⏰ 已刷新" : formatDuration(remain)}
         </div>
         <div class="stats-mini">
-          <div class="stat-box"><div class="v">${itemRecordCount(it.id)}</div><div class="k">${state.lang==='zh'?'记录数':state.lang==='en'?'Records':'記録'}</div></div>
-          <div class="stat-box"><div class="v">${formatDuration(itemAvg(it.id))}</div><div class="k">${state.lang==='zh'?'平均':state.lang==='en'?'Avg':'平均'}</div></div>
-          <div class="stat-box"><div class="v">${formatDuration(itemBase(it.id))}</div><div class="k">${state.lang==='zh'?'基础':state.lang==='en'?'Base':'基本'}</div></div>
+          <div class="stat-box"><div class="v">${itemRecordCount(it.id)}</div><div class="k">记录</div></div>
+          <div class="stat-box"><div class="v">${formatDuration(itemAvg(it.id))}</div><div class="k">平均</div></div>
+          <div class="stat-box"><div class="v">${formatDuration(it.base)}</div><div class="k">参考</div></div>
         </div>
         <div class="item-actions">
-          <button class="btn btn-record" data-act="record" data-id="${it.id}">✓ ${state.lang==='zh'?'记录本次刷新':state.lang==='en'?'Record Spawn':'出現を記録'}</button>
-          <button class="btn btn-reset" data-act="reset" data-id="${it.id}">↻ ${state.lang==='zh'?'重置计时':state.lang==='en'?'Reset Timer':'リセット'}</button>
-          <button class="btn btn-danger" data-act="delete" data-id="${it.id}">✕ ${state.lang==='zh'?'删除':state.lang==='en'?'Delete':'削除'}</button>
+          <button class="btn btn-record" data-act="record" data-id="${it.id}">✓ 记录</button>
+          <button class="btn btn-reset" data-act="reset" data-id="${it.id}">↻ 重置</button>
+          <button class="btn btn-danger" data-act="delete" data-id="${it.id}">✕ 删除</button>
         </div>
       </div>
     `;
   }).join("");
 
-  // 绑定事件
   list.querySelectorAll("button[data-act]").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
@@ -776,49 +1982,31 @@ function renderItemList() {
   });
 }
 
-function escapeHtml(s) {
-  return String(s||"").replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-function itemRecordCount(id) {
-  return state.history.filter(h => h.itemId === id).length;
-}
+function itemRecordCount(id) { return state.history.filter(h => h.itemId === id).length; }
 function itemAvg(id) {
   const arr = state.history.filter(h => h.itemId === id).map(h => h.durationSec);
   if (arr.length === 0) return 0;
   return Math.round(arr.reduce((a,b)=>a+b,0) / arr.length);
 }
-function itemBase(id) {
-  const it = state.items.find(i => i.id === id);
-  return it ? it.base : 0;
-}
 
+/* 历史 */
 function renderHistory() {
   const filter = document.getElementById("filterItem").value;
   const list = document.getElementById("historyList");
-  const dict = i18n[state.lang] || i18n.zh;
 
-  // 更新筛选下拉
   const sel = document.getElementById("filterItem");
   const cur = sel.value;
-  sel.innerHTML = `<option value="__all__">${dict.filterAll}</option>` +
-    state.items.map(it => {
-      const n = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
-      return `<option value="${it.id}">${escapeHtml(n)}</option>`;
-    }).join("");
+  sel.innerHTML = `<option value="__all__">全部物资</option>` +
+    state.items.map(it => `<option value="${it.id}">${escapeHtml(it.icon || '🎯')} ${escapeHtml(it.name)}</option>`).join("");
   if (state.items.some(i => i.id === cur) || cur === "__all__") sel.value = cur;
 
   let arr = state.history.slice().sort((a,b) => b.recordedAt - a.recordedAt);
   if (filter !== "__all__") arr = arr.filter(h => h.itemId === filter);
 
-  // 汇总
-  const total = arr.length;
-  document.getElementById("totalRecords").textContent = total;
-  if (total > 0) {
+  document.getElementById("totalRecords").textContent = arr.length;
+  if (arr.length > 0) {
     const durs = arr.map(h => h.durationSec);
-    const avg = Math.round(durs.reduce((a,b)=>a+b,0) / total);
+    const avg = Math.round(durs.reduce((a,b)=>a+b,0) / arr.length);
     document.getElementById("avgDuration").textContent = formatDuration(avg);
     document.getElementById("minDuration").textContent = formatDuration(Math.min(...durs));
     document.getElementById("maxDuration").textContent = formatDuration(Math.max(...durs));
@@ -829,82 +2017,95 @@ function renderHistory() {
   }
 
   if (arr.length === 0) {
-    list.innerHTML = `<div class="empty">${dict.emptyHistory}</div>`;
+    list.innerHTML = `<div class="empty">暂无记录</div>`;
     return;
   }
-  list.innerHTML = arr.map((h, idx) => {
-    const diffBase = h.baseUsed ? (h.durationSec - h.baseUsed) : 0;
-    const diffStr = diffBase === 0 ? "= Base" : (diffBase > 0 ? `+${diffBase}s` : `${diffBase}s`);
-    return `
-      <div class="history-entry">
-        <div class="h-index">${arr.length - idx}</div>
-        <div class="h-info">
-          <div class="name">${escapeHtml(h.itemName)}</div>
-          <div class="detail">${formatTime(h.recordedAt)} · Base ${h.baseUsed||'-'}s · ${diffStr}</div>
-        </div>
-        <div class="h-duration">${formatDuration(h.durationSec)}</div>
+  list.innerHTML = arr.map((h, idx) => `
+    <div class="history-entry">
+      <div class="h-index">${arr.length - idx}</div>
+      <div class="h-info">
+        <div class="name">${escapeHtml(h.itemName)}</div>
+        <div class="detail">${formatTime(h.recordedAt)}</div>
       </div>
-    `;
-  }).join("");
+      <div class="h-duration">${formatDuration(h.durationSec)}</div>
+    </div>
+  `).join("");
 }
 
-/* ======================== 业务操作 ======================== */
+/* 添加物资 */
 function addItem() {
-  const nameCN = document.getElementById("inputNameCN").value.trim();
-  const nameEN = document.getElementById("inputNameEN").value.trim();
+  const name = document.getElementById("inputName").value.trim();
+  let category = document.getElementById("inputCategory").value;
+  const island = document.getElementById("inputIsland").value;
   const base = parseInt(document.getElementById("inputBase").value, 10);
   const min = parseInt(document.getElementById("inputMin").value, 10);
   const max = parseInt(document.getElementById("inputMax").value, 10);
 
-  if (!nameCN && !nameEN) {
-    toast(state.lang === 'zh' ? "请填写物品名称" : "Please enter an item name");
-    return;
+  if (category === "__custom__") {
+    category = document.getElementById("inputCustomCategory").value.trim();
+    if (category && !state.categories.includes(category)) state.categories.push(category);
   }
-  if (isNaN(base) || isNaN(min) || isNaN(max) || base <= 0 || min < 0 || max < 0) {
-    toast(state.lang === 'zh' ? "时长需为正整数" : "Duration must be positive");
-    return;
+  if (!name) { toast("请填写物品名称"); return; }
+  if (isNaN(base) || isNaN(min) || isNaN(max) || base <= 0 || min <= 0 || max <= 0) {
+    toast("时长需为正整数"); return;
   }
+
+  const customIconVal = document.getElementById("customIcon").value.trim();
+  const icon = customIconVal || state.selectedIcon || "🎯";
 
   const it = {
     id: uid(),
-    nameCN, nameEN, base, min, max,
+    name, icon,
+    category: category || "未分类",
+    island,
+    base, min, max,
     createdAt: Date.now(),
     lastRecordAt: Date.now()
   };
-  // 首次波动：从当前时刻 + 随机波动时长
+  
+  if (!state.categories.includes(it.category) && it.category !== "未分类") {
+    state.categories.push(it.category);
+  }
+
   const wave = randomWaveTime(it);
   it.nextAt = Date.now() + wave * 1000;
   it.currentWave = wave;
   state.items.push(it);
   save();
   renderAll();
-  toast(state.lang === 'zh' ? "已添加，开始波动计时！" : "Added — wave timer started!");
+  toast("已添加，开始计时！");
 
-  document.getElementById("inputNameCN").value = "";
-  document.getElementById("inputNameEN").value = "";
+  document.getElementById("inputName").value = "";
+  document.getElementById("inputCustomCategory").value = "";
+  document.getElementById("customCategoryWrapper").style.display = "none";
+  document.getElementById("customIcon").value = "";
+  document.getElementById("inputCategory").value = "";
+  document.getElementById("inputIsland").value = "";
 }
 
 function recordSpawn(id) {
   const it = state.items.find(i => i.id === id);
   if (!it) return;
   const now = Date.now();
-  const durationSec = Math.round((now - (it.lastRecordAt || it.createdAt)) / 1000);
-  const name = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
+  const actualSpawnAt = Math.min(it.nextAt, now);
+  const durationSec = Math.round((actualSpawnAt - (it.lastRecordAt || it.createdAt)) / 1000);
   state.history.push({
     id: uid(),
     itemId: it.id,
-    itemName: name,
+    itemName: it.name,
     durationSec: Math.max(1, durationSec),
     recordedAt: now,
     baseUsed: it.base
   });
-  it.lastRecordAt = now;
+  it.lastRecordAt = actualSpawnAt;
   const wave = randomWaveTime(it);
   it.currentWave = wave;
-  it.nextAt = now + wave * 1000;
+  it.nextAt = actualSpawnAt + wave * 1000;
+  firedSet.delete(it.id + ":due");
+  firedSet.delete(it.id + ":lead");
   save();
   renderAll();
-  toast(`${state.lang==='zh'?'已记录刷新：':'Spawn recorded: '}${name} (${formatDuration(durationSec)})`);
+  toast(`${it.name}: ${formatDuration(durationSec)}`);
 }
 
 function resetTimer(id) {
@@ -914,13 +2115,15 @@ function resetTimer(id) {
   const wave = randomWaveTime(it);
   it.currentWave = wave;
   it.nextAt = Date.now() + wave * 1000;
+  firedSet.delete(it.id + ":due");
+  firedSet.delete(it.id + ":lead");
   save();
   renderAll();
-  toast(state.lang==='zh' ? "已重置，生成新的波动时间" : "Reset — new wave generated");
+  toast("已重置");
 }
 
 function deleteItem(id) {
-  const ok = confirm(state.lang==='zh' ? "确认删除该物资？历史记录保留。" : "Delete this item? History stays.");
+  const ok = confirm("确认删除？历史记录保留。");
   if (!ok) return;
   state.items = state.items.filter(i => i.id !== id);
   save();
@@ -929,20 +2132,15 @@ function deleteItem(id) {
 
 function clearFilteredHistory() {
   const filter = document.getElementById("filterItem").value;
-  const ok = confirm(filter === "__all__"
-    ? (state.lang==='zh' ? "清除全部历史记录？" : "Clear ALL history?")
-    : (state.lang==='zh' ? "清除该物资下的历史？" : "Clear this item's history?"));
+  const ok = confirm(filter === "__all__" ? "清除全部历史？" : "清除该物资历史？");
   if (!ok) return;
-  if (filter === "__all__") {
-    state.history = [];
-  } else {
-    state.history = state.history.filter(h => h.itemId !== filter);
-  }
+  if (filter === "__all__") state.history = [];
+  else state.history = state.history.filter(h => h.itemId !== filter);
   save();
   renderAll();
 }
 
-/* ======================== 定时刷新 ======================== */
+/* 定时刷新 */
 function tick() {
   const now = Date.now();
   document.querySelectorAll("[data-timer]").forEach(el => {
@@ -951,7 +2149,7 @@ function tick() {
     if (!it) return;
     const remain = (it.nextAt - now) / 1000;
     if (remain <= 0) {
-      el.textContent = state.lang==='zh' ? "⏰ 已刷新！点击记录" : "⏰ Spawned! Click Record";
+      el.textContent = "⏰ 已刷新";
       el.classList.remove("warn");
       el.classList.add("good");
     } else {
@@ -960,9 +2158,7 @@ function tick() {
       el.classList.remove("good");
     }
   });
-  // 提醒面板秒级刷新
   renderReminderTick();
-  // 提醒触发（精确到秒，使用整数秒 key 防抖）
   state.items.forEach(it => {
     const remain = (it.nextAt - now) / 1000;
     if (remain <= 0) {
@@ -977,17 +2173,14 @@ function tick() {
 
 function renderReminderTick() {
   const list = document.getElementById("reminderList");
-  if (!list) return;
-  if (state.items.length === 0) return; // 初次空态由 renderReminder 维护
+  if (!list || state.items.length === 0) return;
   const now = Date.now();
-  // 仅更新数字，避免每次重建 DOM
   list.querySelectorAll("[data-r-cd]").forEach(el => {
     const id = el.getAttribute("data-r-cd");
     const it = state.items.find(i => i.id === id);
     if (!it) return;
     const remain = (it.nextAt - now) / 1000;
-    if (remain <= 0) el.textContent = state.lang==='zh'?"已刷新！":state.lang==='en'?"Spawned!":"出現!";
-    else el.textContent = formatDuration(remain);
+    el.textContent = remain <= 0 ? "已刷新" : formatDuration(remain);
     const row = el.closest(".reminder-item");
     if (row) {
       row.classList.toggle("due", remain <= 0);
@@ -999,25 +2192,23 @@ function renderReminderTick() {
 function renderReminder() {
   const list = document.getElementById("reminderList");
   if (!list) return;
-  const dict = i18n[state.lang] || i18n.zh;
   if (state.items.length === 0) {
-    list.innerHTML = `<div class="empty">${dict.emptyReminder}</div>`;
+    list.innerHTML = `<div class="empty">暂无物资</div>`;
     return;
   }
   const sorted = state.items.slice().sort((a,b) => a.nextAt - b.nextAt);
   const now = Date.now();
   list.innerHTML = sorted.map(it => {
     const remain = (it.nextAt - now) / 1000;
-    const displayName = state.lang === "en" ? (it.nameEN || it.nameCN) : (it.nameCN || it.nameEN);
     const dueCls = remain <= 0 ? "due" : (remain <= 10 ? "lead" : "");
-    const tag = remain <= 0 ? `<span class="r-tag">${dict.tagDue}</span>` : (remain <= 10 ? `<span class="r-tag">${dict.tagLead}</span>` : "");
+    const tag = remain <= 0 ? `<span class="r-tag">已刷新</span>` : (remain <= 10 ? `<span class="r-tag">即将</span>` : "");
     return `
       <div class="reminder-item ${dueCls}">
         <div class="r-info">
-          <div class="name">🎯 ${escapeHtml(displayName)}</div>
-          <div class="at">${formatTime(it.nextAt)} · base ${it.base}s</div>
+          <div class="name">${escapeHtml(it.icon||'🎯')} ${escapeHtml(it.name)}${it.island?` · ${escapeHtml(it.island)}`:''}</div>
+          <div class="at">${formatTime(it.nextAt)} · ${it.category||''}</div>
         </div>
-        <div class="r-countdown" data-r-cd="${it.id}">${remain <= 0 ? (state.lang==='zh'?'已刷新！':state.lang==='en'?'Spawned!':'出現!') : formatDuration(remain)}</div>
+        <div class="r-countdown" data-r-cd="${it.id}">${remain <= 0 ? "已刷新" : formatDuration(remain)}</div>
         ${tag}
       </div>
     `;
@@ -1025,132 +2216,1461 @@ function renderReminder() {
 }
 
 function fireReminder(item, type) {
-  const dict = i18n[state.lang] || i18n.zh;
-  const displayName = state.lang === "en" ? (item.nameEN || item.nameCN) : (item.nameCN || item.nameEN);
-  let title, body;
+  let icon, title, msg;
   if (type === "due") {
-    title = state.lang==='zh' ? "🔔 物资已刷新！" : state.lang==='en' ? "🔔 Item Spawned!" : "🔔 素材が出現！";
-    body  = `${displayName} ${state.lang==='zh'?'可采集':state.lang==='en'?'is ready to collect':'回収可能'}`;
+    icon = "🔔";
+    title = "物资已刷新";
+    msg = `${item.icon||'🎯'} ${item.name}${item.island?` (${item.island})`:''} 可以采集了！`;
   } else {
-    title = state.lang==='zh' ? "⏰ 即将刷新" : state.lang==='en' ? "⏰ Spawn Imminent" : "⏰ もうすぐ出現";
-    body  = `${displayName} ${state.lang==='zh'?'将在 10 秒后刷新':state.lang==='en'?'spawns in 10s':'10秒後に出現'}`;
+    icon = "⏰";
+    title = "即将刷新";
+    msg = `${item.icon||'🎯'} ${item.name} 10秒后刷新`;
   }
-  // 页面内 toast
-  toast(title + " — " + body);
-  // 提示音
-  if (state.settings.sound) playBeep(type === "due" ? 880 : 660);
-  // 系统通知
-  if (state.settings.notif && "Notification" in window && Notification.permission === "granted") {
-    try { new Notification(title, { body, icon: "", tag: "refresh-" + item.id + ":" + type }); } catch(e) {}
-  }
+  
+  showReminderToast(icon, title, msg, type === "due" ? "reminder" : "reminder-soon");
 }
 
-let audioCtx = null;
-function playBeep(freq) {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const ctx = audioCtx;
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.frequency.value = freq;
-    o.type = "sine";
-    o.connect(g);
-    g.connect(ctx.destination);
-    const t = ctx.currentTime;
-    g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(0.18, t + 0.02);
-    g.gain.linearRampToValueAtTime(0, t + 0.35);
-    o.start(t);
-    o.stop(t + 0.4);
-    // 到点提醒双音
-    if (freq === 880) {
-      const o2 = ctx.createOscillator();
-      const g2 = ctx.createGain();
-      o2.frequency.value = 1320;
-      o2.type = "sine";
-      o2.connect(g2); g2.connect(ctx.destination);
-      g2.gain.setValueAtTime(0, t + 0.18);
-      g2.gain.linearRampToValueAtTime(0.18, t + 0.20);
-      g2.gain.linearRampToValueAtTime(0, t + 0.55);
-      o2.start(t + 0.18); o2.stop(t + 0.6);
-    }
-  } catch(e) { /* 用户未交互前 AudioContext 会被阻止，正常情况 */ }
+function showReminderToast(icon, title, msg, className) {
+  const container = document.getElementById("toastContainer") || createToastContainer();
+  
+  const toastEl = document.createElement("div");
+  toastEl.className = `reminder-toast ${className || ""}`;
+  toastEl.innerHTML = `
+    <div class="rt-icon">${icon}</div>
+    <div class="rt-content">
+      <div class="rt-title">${title}</div>
+      <div class="rt-msg">${msg}</div>
+    </div>
+  `;
+  container.appendChild(toastEl);
+  
+  requestAnimationFrame(() => {
+    toastEl.classList.add("show");
+  });
+  
+  setTimeout(() => {
+    toastEl.classList.remove("show");
+    setTimeout(() => toastEl.remove(), 300);
+  }, 3000);
 }
+
+function createToastContainer() {
+  const container = document.createElement("div");
+  container.id = "toastContainer";
+  document.body.appendChild(container);
+  return container;
+}
+
+const toastStyles = document.createElement("style");
+toastStyles.textContent = `
+  #toastContainer {
+    position: fixed;
+    bottom: 90px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .reminder-toast {
+    background: linear-gradient(135deg, rgba(30,35,60,0.98), rgba(20,24,45,0.98));
+    border: 1.5px solid rgba(255,216,155,0.6);
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 90%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(255,216,155,0.15);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .reminder-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reminder-toast.reminder {
+    border-color: #38ef7d;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 25px rgba(56,239,125,0.3);
+  }
+  .reminder-toast.reminder-soon {
+    border-color: #4facfe;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 25px rgba(79,172,254,0.3);
+  }
+  .rt-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  .rt-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .rt-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .reminder-toast.reminder .rt-title { color: #38ef7d; }
+  .reminder-toast.reminder-soon .rt-title { color: #4facfe; }
+  .rt-msg {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+document.head.appendChild(toastStyles);
 
 async function requestNotify() {
-  if (!("Notification" in window)) {
-    toast(state.lang==='zh'?"当前浏览器不支持系统通知":"Notifications not supported");
-    return;
+  if (window.Capacitor?.Plugins?.LocalNotifications) {
+    try {
+      await window.Capacitor.Plugins.LocalNotifications.requestPermissions();
+      state.settings.notif = true;
+      save(); updateNotifyStatus();
+      toast("后台通知已开启");
+      return;
+    } catch(e) {}
   }
+  if (!("Notification" in window)) { toast("不支持系统通知"); return; }
   try {
     const perm = await Notification.requestPermission();
     if (perm === "granted") {
-      state.settings.notif = true;
-      save();
-      updateNotifyStatus();
-      toast(state.lang==='zh'?"系统通知已开启":"System notifications enabled");
-    } else {
-      toast(state.lang==='zh'?"通知权限被拒绝":"Notification permission denied");
-    }
-  } catch(e) { console.warn(e); }
+      state.settings.notif = true; save(); updateNotifyStatus();
+      toast("系统通知已开启");
+    } else { toast("通知权限被拒绝"); }
+  } catch(e) {}
 }
 
 function updateNotifyStatus() {
   const el = document.getElementById("notifyStatus");
   if (!el) return;
-  if (!("Notification" in window)) { el.textContent = "—"; return; }
-  const perm = Notification.permission;
-  if (perm === "granted" && state.settings.notif) {
-    el.textContent = state.lang==='zh'?"● 已开启":"● Enabled";
-  } else if (perm === "denied") {
-    el.textContent = state.lang==='zh'?"● 已拒绝（需在浏览器设置中开启）":"● Denied (enable in browser settings)";
-  } else {
-    el.textContent = state.lang==='zh'?"● 未开启":"● Disabled";
+  if (state.settings.notif) el.textContent = "● 已开启";
+  else if ("Notification" in window && Notification.permission === "denied") el.textContent = "● 已拒绝";
+  else el.textContent = "● 未开启";
+}
+
+/* ===== 炼药功能 ===== */
+function getAllHerbs() {
+  return [...state.potion.herbs, ...state.potion.customHerbs];
+}
+
+function getHerbById(id) {
+  return getAllHerbs().find(h => h.id === id);
+}
+
+function switchPotionSubtab(subtab) {
+  state.potion.currentSubtab = subtab;
+  save();
+  document.querySelectorAll(".subtab-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.subtab === subtab);
+  });
+  document.querySelectorAll(".subtab-content").forEach(c => {
+    c.classList.toggle("active", c.id === "subtab-" + subtab);
+  });
+  renderPotionAll();
+}
+
+function renderPotionAll() {
+  renderCauldron();
+  renderHerbGrid();
+  renderHerbLibraryGrid();
+  renderRecipeList();
+  renderRecipeSelect();
+}
+
+function renderCauldron() {
+  document.querySelectorAll(".fire-slot").forEach((slot, idx) => {
+    slot.classList.toggle("selected", state.potion.selectedSlot === idx);
+  });
+
+  state.potion.cauldronSlots.forEach((herbIds, idx) => {
+    const slotEl = document.querySelector(`.fire-herb-slot[data-herb-slot="${idx}"]`);
+    if (!slotEl) return;
+    const hasHerbs = herbIds && herbIds.length > 0;
+    slotEl.classList.toggle("has-herb", hasHerbs);
+    if (hasHerbs) {
+      const herbs = herbIds.map(id => getHerbById(id)).filter(Boolean);
+      slotEl.innerHTML = `
+        <div class="slot-herbs">
+          ${herbs.map((h, i) => `
+            <div class="slot-herb-item" data-slot="${idx}" data-idx="${i}" title="点击移除">
+              <span class="shi-icon">${escapeHtml(h.icon)}</span>
+              <span class="shi-name">${escapeHtml(h.name)}</span>
+              <span class="shi-remove">×</span>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    } else {
+      slotEl.innerHTML = `<span class="slot-empty">+ 放入药材</span>`;
+    }
+  });
+
+  document.querySelectorAll(".slot-herb-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const slotIdx = parseInt(item.dataset.slot, 10);
+      const herbIdx = parseInt(item.dataset.idx, 10);
+      removeHerbFromSlot(slotIdx, herbIdx);
+    });
+  });
+}
+
+function getFilteredHerbs() {
+  let herbs = getAllHerbs();
+  if (state.potion.filterQuality !== "all") {
+    herbs = herbs.filter(h => h.quality === state.potion.filterQuality);
+  }
+  if (state.potion.searchQuery) {
+    const q = state.potion.searchQuery.toLowerCase();
+    herbs = herbs.filter(h => h.name.toLowerCase().includes(q));
+  }
+  return herbs;
+}
+
+function getFilteredHerbs2() {
+  let herbs = getAllHerbs();
+  if (state.potion.filterQuality2 !== "all") {
+    herbs = herbs.filter(h => h.quality === state.potion.filterQuality2);
+  }
+  return herbs;
+}
+
+function renderHerbGrid() {
+  const grid = document.getElementById("herbGrid");
+  if (!grid) return;
+  const herbs = getFilteredHerbs();
+  if (herbs.length === 0) {
+    grid.innerHTML = `<div class="empty">暂无药材</div>`;
+    return;
+  }
+  grid.innerHTML = herbs.map(h => `
+    <div class="herb-card q-${h.quality}" data-herb-id="${h.id}">
+      <div class="hc-icon">${escapeHtml(h.icon)}</div>
+      <div class="hc-name">${escapeHtml(h.name)}</div>
+      <div class="hc-meta">
+        <span>${QUALITY_NAMES[h.quality] || ''}</span>
+        ${h.element ? `<span>${h.element}</span>` : ''}
+      </div>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll(".herb-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const herbId = card.dataset.herbId;
+      placeHerbToSlot(herbId);
+    });
+  });
+}
+
+function renderHerbLibraryGrid() {
+  const grid = document.getElementById("herbLibraryGrid");
+  if (!grid) return;
+  const herbs = getFilteredHerbs2();
+  if (herbs.length === 0) {
+    grid.innerHTML = `<div class="empty">暂无药材</div>`;
+    return;
+  }
+  grid.innerHTML = herbs.map(h => `
+    <div class="herb-card q-${h.quality}" data-lib-herb-id="${h.id}">
+      ${!h.preset ? `<button class="hc-delete" data-del-herb="${h.id}">×</button>` : ''}
+      <div class="hc-icon">${escapeHtml(h.icon)}</div>
+      <div class="hc-name">${escapeHtml(h.name)}</div>
+      <div class="hc-meta">
+        <span>${QUALITY_NAMES[h.quality] || ''}</span>
+        ${h.element ? `<span>${h.element}</span>` : ''}
+        ${h.preset ? '<span>预设</span>' : '<span>自定义</span>'}
+      </div>
+    </div>
+  `).join("");
+
+  grid.querySelectorAll("[data-del-herb]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.delHerb;
+      const ok = confirm("确认删除该药材？");
+      if (!ok) return;
+      state.potion.customHerbs = state.potion.customHerbs.filter(h => h.id !== id);
+      save();
+      renderPotionAll();
+      toast("已删除");
+    });
+  });
+}
+
+function placeHerbToSlot(herbId) {
+  const slot = state.potion.selectedSlot;
+  if (!state.potion.cauldronSlots[slot]) {
+    state.potion.cauldronSlots[slot] = [];
+  }
+  state.potion.cauldronSlots[slot].push(herbId);
+  save();
+  renderCauldron();
+  const herb = getHerbById(herbId);
+  if (herb) toast(`已放入 ${FIRE_NAMES[slot]}：${herb.name}`);
+}
+
+function removeHerbFromSlot(slotIdx, herbIdx) {
+  if (state.potion.cauldronSlots[slotIdx]) {
+    const removed = state.potion.cauldronSlots[slotIdx].splice(herbIdx, 1);
+    save();
+    renderCauldron();
+    if (removed.length > 0) {
+      const herb = getHerbById(removed[0]);
+      if (herb) toast(`已移除：${herb.name}`);
+    }
   }
 }
 
+function clearCauldron() {
+  state.potion.cauldronSlots = [[], [], [], []];
+  state.potion.selectedSlot = 0;
+  save();
+  renderCauldron();
+  toast("已清空炼丹炉");
+}
+
+function saveAsRecipe() {
+  const hasHerb = state.potion.cauldronSlots.some(s => s && s.length > 0);
+  if (!hasHerb) {
+    toast("请先放入药材");
+    return;
+  }
+  const name = prompt("请输入配方名称：");
+  if (!name || !name.trim()) return;
+  const recipe = {
+    id: uid(),
+    name: name.trim(),
+    slots: state.potion.cauldronSlots.map(s => [...s]),
+    createdAt: Date.now()
+  };
+  state.potion.recipes.push(recipe);
+  save();
+  renderPotionAll();
+  toast("配方已保存！");
+}
+
+function loadRecipe(recipeId) {
+  const recipe = state.potion.recipes.find(r => r.id === recipeId);
+  if (!recipe) return;
+  state.potion.cauldronSlots = recipe.slots.map(s => {
+    if (Array.isArray(s)) return [...s];
+    return s ? [s] : [];
+  });
+  state.potion.selectedSlot = 0;
+  save();
+  renderCauldron();
+  const sel = document.getElementById("cauldronRecipe");
+  if (sel) sel.value = recipeId;
+  toast(`已加载配方：${recipe.name}`);
+}
+
+function deleteRecipe(recipeId) {
+  const ok = confirm("确认删除该配方？");
+  if (!ok) return;
+  state.potion.recipes = state.potion.recipes.filter(r => r.id !== recipeId);
+  save();
+  renderPotionAll();
+  toast("已删除");
+}
+
+function renderRecipeSelect() {
+  const sel = document.getElementById("cauldronRecipe");
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">-- 选择配方 --</option>` +
+    state.potion.recipes.map(r => `<option value="${r.id}">${escapeHtml(r.name)}</option>`).join("");
+  if (state.potion.recipes.some(r => r.id === cur)) sel.value = cur;
+
+  const calcSel = document.getElementById("calcRecipe");
+  if (calcSel) {
+    const calcCur = calcSel.value;
+    calcSel.innerHTML = `<option value="">-- 选择配方 --</option>` +
+      state.potion.recipes.map(r => `<option value="${r.id}">${escapeHtml(r.name)}</option>`).join("");
+    if (state.potion.recipes.some(r => r.id === calcCur)) calcSel.value = calcCur;
+  }
+}
+
+function calcHerbs() {
+  const recipeId = document.getElementById("calcRecipe")?.value;
+  const count = parseInt(document.getElementById("calcCount")?.value || "1", 10);
+  const resultEl = document.getElementById("calcResult");
+  if (!resultEl) return;
+
+  if (!recipeId) {
+    resultEl.innerHTML = `<div class="calc-empty">请先选择配方</div>`;
+    return;
+  }
+  const recipe = state.potion.recipes.find(r => r.id === recipeId);
+  if (!recipe) {
+    resultEl.innerHTML = `<div class="calc-empty">配方不存在</div>`;
+    return;
+  }
+
+  const herbCount = {};
+  const slots = recipe.slots.map(s => Array.isArray(s) ? s : (s ? [s] : []));
+  slots.forEach(slot => {
+    slot.forEach(herbId => {
+      herbCount[herbId] = (herbCount[herbId] || 0) + 1;
+    });
+  });
+
+  const items = Object.entries(herbCount).map(([id, cnt]) => {
+    const herb = getHerbById(id);
+    if (!herb) return null;
+    return { herb, total: cnt * count };
+  }).filter(Boolean);
+
+  if (items.length === 0) {
+    resultEl.innerHTML = `<div class="calc-empty">该配方没有药材</div>`;
+    return;
+  }
+
+  items.sort((a, b) => {
+    const qOrder = { special: 0, purple: 1, blue: 2, green: 3 };
+    return (qOrder[a.herb.quality] ?? 9) - (qOrder[b.herb.quality] ?? 9);
+  });
+
+  resultEl.innerHTML = `
+    <div class="calc-herb-list">
+      ${items.map(item => `
+        <div class="calc-herb-item q-${item.herb.quality}">
+          <span class="chi-icon">${escapeHtml(item.herb.icon)}</span>
+          <div class="chi-info">
+            <div class="chi-name">${escapeHtml(item.herb.name)}</div>
+          </div>
+          <span class="chi-count">×${item.total}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function exportRecipes() {
+  const data = state.potion.recipes.map(r => ({
+    name: r.name,
+    slots: r.slots.map(s => Array.isArray(s) ? s : (s ? [s] : [])),
+    herbs: getAllHerbs().filter(h => {
+      const allIds = r.slots.flat();
+      return allIds.includes(h.id);
+    }).map(h => ({ name: h.name, icon: h.icon, quality: h.quality, element: h.element || "" }))
+  }));
+  const code = btoa(encodeURIComponent(JSON.stringify(data)));
+  const ta = document.getElementById("importTextarea");
+  const copyBtn = document.getElementById("btnCopyExport");
+  if (ta) {
+    ta.classList.add("show");
+    ta.value = code;
+  }
+  if (copyBtn) copyBtn.style.display = "inline-block";
+  toast(`已导出 ${data.length} 个配方，复制代码分享给好友吧！`);
+}
+
+function copyExportCode() {
+  const ta = document.getElementById("importTextarea");
+  if (!ta || !ta.value) return;
+  navigator.clipboard?.writeText(ta.value).then(() => {
+    toast("已复制到剪贴板");
+  }).catch(() => {
+    ta.select();
+    document.execCommand("copy");
+    toast("已复制到剪贴板");
+  });
+}
+
+function showImportArea() {
+  const ta = document.getElementById("importTextarea");
+  const btn = document.getElementById("btnDoImport");
+  if (ta) {
+    ta.classList.add("show");
+    ta.value = "";
+    ta.placeholder = "粘贴配方代码到此处，然后点击确认导入...";
+    ta.focus();
+  }
+  if (btn) btn.style.display = "inline-block";
+}
+
+function importRecipes() {
+  const ta = document.getElementById("importTextarea");
+  if (!ta || !ta.value.trim()) {
+    toast("请先粘贴配方代码");
+    return;
+  }
+  try {
+    const code = ta.value.trim();
+    const data = JSON.parse(decodeURIComponent(atob(code)));
+    if (!Array.isArray(data)) throw new Error("格式错误");
+
+    let imported = 0;
+    data.forEach(item => {
+      if (!item.name || !item.slots) return;
+
+      const slotHerbIds = [];
+      item.slots.forEach((slot, idx) => {
+        const slotIds = [];
+        if (Array.isArray(slot)) {
+          slot.forEach(herbRef => {
+            let herbId = null;
+            if (typeof herbRef === "string" && herbRef.startsWith("herb_")) {
+              herbId = herbRef;
+            } else if (item.herbs && Array.isArray(item.herbs)) {
+              const idx2 = item.slots.flat().indexOf(herbRef);
+              const herbData = item.herbs.find(h => h.name === herbRef) ||
+                               (typeof herbRef === "string" ? item.herbs[Math.max(0, item.slots.flat().indexOf(herbRef))] : null);
+              if (herbData) {
+                const existing = getAllHerbs().find(h =>
+                  h.name === herbData.name && h.quality === herbData.quality
+                );
+                if (existing) {
+                  herbId = existing.id;
+                } else {
+                  const newHerb = {
+                    id: uid(),
+                    name: herbData.name,
+                    icon: herbData.icon || "🌿",
+                    quality: herbData.quality || "special",
+                    element: herbData.element || "",
+                    preset: false
+                  };
+                  state.potion.customHerbs.push(newHerb);
+                  herbId = newHerb.id;
+                }
+              }
+            } else {
+              const existing = getAllHerbs().find(h => h.name === herbRef);
+              if (existing) herbId = existing.id;
+            }
+            if (herbId) slotIds.push(herbId);
+          });
+        }
+        slotHerbIds.push(slotIds);
+      });
+
+      if (slotHerbIds.length === 4) {
+        while (slotHerbIds.length < 4) slotHerbIds.push([]);
+        state.potion.recipes.push({
+          id: uid(),
+          name: item.name,
+          slots: slotHerbIds,
+          createdAt: Date.now()
+        });
+        imported++;
+      }
+    });
+
+    if (imported > 0) {
+      save();
+      renderPotionAll();
+      toast(`成功导入 ${imported} 个配方！`);
+    } else {
+      toast("未导入有效配方");
+    }
+  } catch (e) {
+    console.error(e);
+    toast("导入失败：代码格式错误");
+  }
+}
+
+// ===== 地图点位管理 =====
+let selectedPinIcon = "📍";
+
+function renderPinList() {
+  const list = document.getElementById("pinList");
+  if (!list) return;
+
+  const search = document.getElementById("pinSearch")?.value || "";
+  const islandFilter = document.getElementById("pinIslandFilter")?.value || "";
+
+  let pins = state.mapPins;
+  if (islandFilter) {
+    pins = pins.filter(p => p.island === islandFilter);
+  }
+  if (search) {
+    const q = search.toLowerCase();
+    pins = pins.filter(p => p.name.toLowerCase().includes(q));
+  }
+
+  if (pins.length === 0) {
+    list.innerHTML = `<div class="empty">暂无点位</div>`;
+    return;
+  }
+
+  list.innerHTML = pins.map(p => `
+    <div class="pin-item">
+      <div class="pin-icon">${escapeHtml(p.icon)}</div>
+      <div class="pin-info">
+        <div class="pin-name">${escapeHtml(p.name)}</div>
+        <div class="pin-coords">
+          <span>X: ${p.x}</span>
+          <span>Y: ${p.y}</span>
+        </div>
+      </div>
+      ${p.island ? `<div class="pin-island">${escapeHtml(p.island)}</div>` : ""}
+      <div class="pin-actions">
+        <button class="btn btn-ghost" data-copy-pin="${p.id}">复制</button>
+        <button class="btn btn-danger" data-del-pin="${p.id}">删除</button>
+      </div>
+    </div>
+  `).join("");
+
+  list.querySelectorAll("[data-copy-pin]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const pin = state.mapPins.find(p => p.id === btn.dataset.copyPin);
+      if (pin) {
+        navigator.clipboard?.writeText(`X:${pin.x} Y:${pin.y}`).then(() => {
+          toast("坐标已复制");
+        }).catch(() => {
+          toast("坐标已复制");
+        });
+      }
+    });
+  });
+
+  list.querySelectorAll("[data-del-pin]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (confirm("确认删除该点位？")) {
+        state.mapPins = state.mapPins.filter(p => p.id !== btn.dataset.delPin);
+        save();
+        renderPinList();
+        toast("已删除");
+      }
+    });
+  });
+}
+
+function addPin() {
+  const name = document.getElementById("inputPinName")?.value.trim();
+  const x = parseInt(document.getElementById("inputPinX")?.value, 10);
+  const y = parseInt(document.getElementById("inputPinY")?.value, 10);
+  const island = document.getElementById("inputPinIsland")?.value || "";
+
+  if (!name) { toast("请输入点位名称"); return; }
+  if (isNaN(x)) { toast("请输入X坐标"); return; }
+  if (isNaN(y)) { toast("请输入Y坐标"); return; }
+
+  state.mapPins.push({
+    id: uid(),
+    name,
+    icon: selectedPinIcon,
+    x,
+    y,
+    island,
+    createdAt: Date.now()
+  });
+
+  save();
+  renderPinList();
+  document.getElementById("inputPinName").value = "";
+  document.getElementById("inputPinX").value = "";
+  document.getElementById("inputPinY").value = "";
+  toast("点位已添加");
+}
+
+function exportPins() {
+  const data = state.mapPins.map(p => ({
+    name: p.name,
+    icon: p.icon,
+    x: p.x,
+    y: p.y,
+    island: p.island || ""
+  }));
+  const code = btoa(encodeURIComponent(JSON.stringify(data)));
+  const ta = document.getElementById("pinImportTextarea");
+  const copyBtn = document.getElementById("btnCopyPinExport");
+  if (ta) {
+    ta.classList.add("show");
+    ta.value = code;
+  }
+  if (copyBtn) copyBtn.style.display = "inline-block";
+  toast(`已导出 ${data.length} 个点位`);
+}
+
+function copyPinExportCode() {
+  const ta = document.getElementById("pinImportTextarea");
+  if (!ta || !ta.value) return;
+  navigator.clipboard?.writeText(ta.value).then(() => {
+    toast("已复制到剪贴板");
+  }).catch(() => {
+    ta.select();
+    document.execCommand("copy");
+    toast("已复制到剪贴板");
+  });
+}
+
+function showPinImportArea() {
+  const ta = document.getElementById("pinImportTextarea");
+  const btn = document.getElementById("btnDoImportPins");
+  if (ta) {
+    ta.classList.add("show");
+    ta.value = "";
+    ta.placeholder = "粘贴点位代码到此处，然后点击确认导入...";
+    ta.focus();
+  }
+  if (btn) btn.style.display = "inline-block";
+}
+
+function importPins() {
+  const ta = document.getElementById("pinImportTextarea");
+  if (!ta || !ta.value.trim()) {
+    toast("请先粘贴点位代码");
+    return;
+  }
+  try {
+    const code = ta.value.trim();
+    const data = JSON.parse(decodeURIComponent(atob(code)));
+    if (!Array.isArray(data)) throw new Error("格式错误");
+
+    let imported = 0;
+    data.forEach(item => {
+      if (!item.name || item.x == null || item.y == null) return;
+      state.mapPins.push({
+        id: uid(),
+        name: item.name,
+        icon: item.icon || "📍",
+        x: item.x,
+        y: item.y,
+        island: item.island || "",
+        createdAt: Date.now()
+      });
+      imported++;
+    });
+
+    if (imported > 0) {
+      save();
+      renderPinList();
+      toast(`成功导入 ${imported} 个点位！`);
+    } else {
+      toast("未导入有效点位");
+    }
+  } catch (e) {
+    console.error(e);
+    toast("导入失败：代码格式错误");
+  }
+}
+
+// ===== 交互式地图 =====
+let mapState = {
+  scale: 1,
+  offsetX: 0,
+  offsetY: 0,
+  isDragging: false,
+  dragStartX: 0,
+  dragStartY: 0,
+  dragOffsetStartX: 0,
+  dragOffsetStartY: 0,
+  addMode: false,
+  bgWidth: 2000,
+  bgHeight: 1500,
+  bgImage: null
+};
+let selectedPinIcon2 = "📍";
+
+function initMap() {
+  const viewport = document.getElementById("mapViewport");
+  const canvas = document.getElementById("mapCanvas");
+  if (!viewport || !canvas) return;
+
+  viewport.addEventListener("mousedown", onMapMouseDown);
+  viewport.addEventListener("mousemove", onMapMouseMove);
+  window.addEventListener("mouseup", onMapMouseUp);
+  viewport.addEventListener("wheel", onMapWheel, { passive: false });
+  viewport.addEventListener("click", onMapClick);
+  viewport.addEventListener("touchstart", onMapTouchStart, { passive: false });
+  viewport.addEventListener("touchmove", onMapTouchMove, { passive: false });
+  viewport.addEventListener("touchend", onMapTouchEnd);
+
+  if (state.mapBgData) {
+    loadMapBgFromData(state.mapBgData);
+  } else {
+    loadDefaultMapBg();
+  }
+  renderMapPins();
+}
+
+function loadDefaultMapBg() {
+  const img = document.getElementById("mapBgImg");
+  if (!img) return;
+  img.src = "DItu/ditu.png";
+  img.style.display = "block";
+  img.onload = () => {
+    mapState.bgWidth = img.naturalWidth;
+    mapState.bgHeight = img.naturalHeight;
+    img.style.width = mapState.bgWidth + "px";
+    img.style.height = mapState.bgHeight + "px";
+    const layer = document.getElementById("mapPinsLayer");
+    if (layer) {
+      layer.style.width = mapState.bgWidth + "px";
+      layer.style.height = mapState.bgHeight + "px";
+    }
+    fitMapToView();
+  };
+  img.onerror = () => {
+    updateMapTransform();
+  };
+}
+
+function updateMapTransform() {
+  const canvas = document.getElementById("mapCanvas");
+  if (!canvas) return;
+  canvas.style.transform = `translate(${mapState.offsetX}px, ${mapState.offsetY}px) scale(${mapState.scale})`;
+  const zoomInfo = document.getElementById("mapZoomInfo");
+  if (zoomInfo) zoomInfo.textContent = Math.round(mapState.scale * 100) + "%";
+}
+
+function onMapMouseDown(e) {
+  if (e.target.closest(".map-pin")) return;
+  mapState.isDragging = true;
+  mapState.dragStartX = e.clientX;
+  mapState.dragStartY = e.clientY;
+  mapState.dragOffsetStartX = mapState.offsetX;
+  mapState.dragOffsetStartY = mapState.offsetY;
+}
+
+function onMapMouseMove(e) {
+  const viewport = document.getElementById("mapViewport");
+  if (!viewport) return;
+  const rect = viewport.getBoundingClientRect();
+  const x = (e.clientX - rect.left - mapState.offsetX) / mapState.scale;
+  const y = (e.clientY - rect.top - mapState.offsetY) / mapState.scale;
+  const coordsEl = document.getElementById("mapCoords");
+  if (coordsEl) coordsEl.textContent = `${Math.round(x)}, ${Math.round(y)}`;
+
+  if (!mapState.isDragging) return;
+  mapState.offsetX = mapState.dragOffsetStartX + (e.clientX - mapState.dragStartX);
+  mapState.offsetY = mapState.dragOffsetStartY + (e.clientY - mapState.dragStartY);
+  updateMapTransform();
+}
+
+function onMapMouseUp() {
+  mapState.isDragging = false;
+}
+
+function onMapWheel(e) {
+  e.preventDefault();
+  const viewport = document.getElementById("mapViewport");
+  const rect = viewport.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  
+  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  const newScale = Math.max(0.2, Math.min(5, mapState.scale + delta));
+  const scaleRatio = newScale / mapState.scale;
+  
+  mapState.offsetX = mouseX - (mouseX - mapState.offsetX) * scaleRatio;
+  mapState.offsetY = mouseY - (mouseY - mapState.offsetY) * scaleRatio;
+  mapState.scale = newScale;
+  updateMapTransform();
+}
+
+let mapClickMoved = false;
+function onMapClick(e) {
+  if (mapClickMoved) { mapClickMoved = false; return; }
+  if (e.target.closest(".map-pin")) return;
+  if (!mapState.addMode) return;
+  
+  const viewport = document.getElementById("mapViewport");
+  const rect = viewport.getBoundingClientRect();
+  const x = Math.round((e.clientX - rect.left - mapState.offsetX) / mapState.scale);
+  const y = Math.round((e.clientY - rect.top - mapState.offsetY) / mapState.scale);
+  
+  const name = prompt("请输入点位名称：");
+  if (!name || !name.trim()) return;
+  
+  const island = prompt("所属岛屿（可选，直接跳过）：") || "";
+  
+  state.mapPins.push({
+    id: uid(),
+    name: name.trim(),
+    icon: selectedPinIcon2,
+    x, y,
+    island: island.trim(),
+    createdAt: Date.now()
+  });
+  save();
+  renderMapPins();
+  renderPinList2();
+  toast(`已添加点位：${name.trim()}`);
+}
+
+let touchStartDist = 0;
+let touchStartScale = 1;
+let lastTouchX = 0, lastTouchY = 0;
+
+function onMapTouchStart(e) {
+  if (e.touches.length === 1) {
+    mapState.isDragging = true;
+    lastTouchX = e.touches[0].clientX;
+    lastTouchY = e.touches[0].clientY;
+    mapState.dragOffsetStartX = mapState.offsetX;
+    mapState.dragOffsetStartY = mapState.offsetY;
+    mapClickMoved = false;
+  } else if (e.touches.length === 2) {
+    mapState.isDragging = false;
+    touchStartDist = getTouchDist(e);
+    touchStartScale = mapState.scale;
+  }
+}
+
+function onMapTouchMove(e) {
+  e.preventDefault();
+  if (e.touches.length === 1 && mapState.isDragging) {
+    const dx = e.touches[0].clientX - lastTouchX;
+    const dy = e.touches[0].clientY - lastTouchY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) mapClickMoved = true;
+    mapState.offsetX = mapState.dragOffsetStartX + dx;
+    mapState.offsetY = mapState.dragOffsetStartY + dy;
+    updateMapTransform();
+  } else if (e.touches.length === 2) {
+    const dist = getTouchDist(e);
+    const ratio = dist / touchStartDist;
+    mapState.scale = Math.max(0.2, Math.min(5, touchStartScale * ratio));
+    updateMapTransform();
+  }
+}
+
+function onMapTouchEnd(e) {
+  mapState.isDragging = false;
+  if (e.touches.length === 0 && !mapClickMoved && mapState.addMode) {
+    // 单指点击，处理添加
+  }
+}
+
+function getTouchDist(e) {
+  const dx = e.touches[0].clientX - e.touches[1].clientX;
+  const dy = e.touches[0].clientY - e.touches[1].clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function renderMapPins() {
+  const layer = document.getElementById("mapPinsLayer");
+  if (!layer) return;
+  
+  const search = document.getElementById("pinSearch2")?.value || "";
+  let pins = state.mapPins;
+  if (search) {
+    const q = search.toLowerCase();
+    pins = pins.filter(p => p.name.toLowerCase().includes(q));
+  }
+  
+  layer.innerHTML = pins.map(p => `
+    <div class="map-pin" data-pin-id="${p.id}" style="left:${p.x}px;top:${p.y}px;" title="${escapeHtml(p.name)}">
+      <div class="mp-icon">${escapeHtml(p.icon)}</div>
+      <div class="mp-label">${escapeHtml(p.name)}</div>
+    </div>
+  `).join("");
+  
+  layer.querySelectorAll(".map-pin").forEach(pi => {
+    pi.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const pin = state.mapPins.find(p => p.id === pi.dataset.pinId);
+      if (pin && confirm(`【${pin.name}】\nX: ${pin.x}  Y: ${pin.y}${pin.island?'\n'+pin.island:''}\n\n点击确定删除此点位`)) {
+        state.mapPins = state.mapPins.filter(p => p.id !== pin.id);
+        save();
+        renderMapPins();
+        renderPinList2();
+        toast("已删除");
+      }
+    });
+  });
+}
+
+function zoomMap(delta) {
+  const viewport = document.getElementById("mapViewport");
+  if (!viewport) return;
+  const rect = viewport.getBoundingClientRect();
+  const cx = rect.width / 2;
+  const cy = rect.height / 2;
+  const newScale = Math.max(0.2, Math.min(5, mapState.scale + delta));
+  const ratio = newScale / mapState.scale;
+  mapState.offsetX = cx - (cx - mapState.offsetX) * ratio;
+  mapState.offsetY = cy - (cy - mapState.offsetY) * ratio;
+  mapState.scale = newScale;
+  updateMapTransform();
+}
+
+function resetMap() {
+  mapState.scale = 1;
+  mapState.offsetX = 0;
+  mapState.offsetY = 0;
+  updateMapTransform();
+}
+
+function toggleAddPinMode() {
+  mapState.addMode = !mapState.addMode;
+  const btn = document.getElementById("btnAddPinOnMap");
+  const viewport = document.getElementById("mapViewport");
+  if (btn) btn.classList.toggle("active", mapState.addMode);
+  if (viewport) {
+    viewport.style.cursor = mapState.addMode ? "crosshair" : "grab";
+  }
+  toast(mapState.addMode ? "点击地图添加点位" : "已退出添加模式");
+}
+
+function loadMapBgFromData(dataUrl) {
+  const img = document.getElementById("mapBgImg");
+  if (!img) return;
+  img.src = dataUrl;
+  img.style.display = "block";
+  img.onload = () => {
+    mapState.bgWidth = img.naturalWidth;
+    mapState.bgHeight = img.naturalHeight;
+    img.style.width = mapState.bgWidth + "px";
+    img.style.height = mapState.bgHeight + "px";
+    const layer = document.getElementById("mapPinsLayer");
+    if (layer) {
+      layer.style.width = mapState.bgWidth + "px";
+      layer.style.height = mapState.bgHeight + "px";
+    }
+    fitMapToView();
+  };
+}
+
+function fitMapToView() {
+  const viewport = document.getElementById("mapViewport");
+  if (!viewport) return;
+  const rect = viewport.getBoundingClientRect();
+  const sx = (rect.width - 20) / mapState.bgWidth;
+  const sy = (rect.height - 20) / mapState.bgHeight;
+  mapState.scale = Math.min(sx, sy, 1);
+  mapState.offsetX = (rect.width - mapState.bgWidth * mapState.scale) / 2;
+  mapState.offsetY = (rect.height - mapState.bgHeight * mapState.scale) / 2;
+  updateMapTransform();
+}
+
+function addPin2() {
+  const name = document.getElementById("inputPinName2")?.value.trim();
+  const x = parseInt(document.getElementById("inputPinX2")?.value, 10);
+  const y = parseInt(document.getElementById("inputPinY2")?.value, 10);
+  const island = document.getElementById("inputPinIsland2")?.value || "";
+  if (!name) { toast("请输入点位名称"); return; }
+  if (isNaN(x)) { toast("请输入X坐标"); return; }
+  if (isNaN(y)) { toast("请输入Y坐标"); return; }
+  state.mapPins.push({
+    id: uid(),
+    name,
+    icon: selectedPinIcon2,
+    x, y,
+    island,
+    createdAt: Date.now()
+  });
+  save();
+  renderMapPins();
+  renderPinList2();
+  document.getElementById("inputPinName2").value = "";
+  document.getElementById("inputPinX2").value = "";
+  document.getElementById("inputPinY2").value = "";
+  toast("点位已添加");
+}
+
+function renderPinList2() {
+  const list = document.getElementById("pinList2");
+  if (!list) return;
+  const search = document.getElementById("pinSearch2")?.value || "";
+  let pins = state.mapPins;
+  if (search) {
+    const q = search.toLowerCase();
+    pins = pins.filter(p => p.name.toLowerCase().includes(q));
+  }
+  if (pins.length === 0) {
+    list.innerHTML = `<div class="empty">暂无点位</div>`;
+    return;
+  }
+  list.innerHTML = pins.map(p => `
+    <div class="pin-item">
+      <div class="pin-icon">${escapeHtml(p.icon)}</div>
+      <div class="pin-info">
+        <div class="pin-name">${escapeHtml(p.name)}</div>
+        <div class="pin-coords">
+          <span>X: ${p.x}</span>
+          <span>Y: ${p.y}</span>
+        </div>
+      </div>
+      <div class="pin-actions">
+        <button class="btn btn-ghost" data-locate-pin="${p.id}">定位</button>
+        <button class="btn btn-danger" data-del-pin2="${p.id}">删</button>
+      </div>
+    </div>
+  `).join("");
+  
+  list.querySelectorAll("[data-locate-pin]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const pin = state.mapPins.find(p => p.id === btn.dataset.locatePin);
+      if (pin) locatePin(pin);
+    });
+  });
+  list.querySelectorAll("[data-del-pin2]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (confirm("确认删除该点位？")) {
+        state.mapPins = state.mapPins.filter(p => p.id !== btn.dataset.delPin2);
+        save();
+        renderMapPins();
+        renderPinList2();
+        toast("已删除");
+      }
+    });
+  });
+}
+
+function locatePin(pin) {
+  const viewport = document.getElementById("mapViewport");
+  if (!viewport) return;
+  const rect = viewport.getBoundingClientRect();
+  const targetScale = Math.max(1, mapState.scale);
+  mapState.scale = targetScale;
+  mapState.offsetX = rect.width / 2 - pin.x * targetScale;
+  mapState.offsetY = rect.height / 2 - pin.y * targetScale;
+  updateMapTransform();
+}
+
+function exportPins2() {
+  const data = state.mapPins.map(p => ({
+    name: p.name, icon: p.icon, x: p.x, y: p.y, island: p.island || ""
+  }));
+  const code = btoa(encodeURIComponent(JSON.stringify(data)));
+  const ta = document.getElementById("pinImportTextarea2");
+  const copyBtn = document.getElementById("btnCopyPinExport2");
+  if (ta) { ta.classList.add("show"); ta.value = code; }
+  if (copyBtn) copyBtn.style.display = "inline-block";
+  toast(`已导出 ${data.length} 个点位`);
+}
+
+function copyPinExport2() {
+  const ta = document.getElementById("pinImportTextarea2");
+  if (!ta || !ta.value) return;
+  navigator.clipboard?.writeText(ta.value).then(() => {
+    toast("已复制");
+  }).catch(() => { ta.select(); document.execCommand("copy"); toast("已复制"); });
+}
+
+function showPinImportArea2() {
+  const ta = document.getElementById("pinImportTextarea2");
+  const btn = document.getElementById("btnDoImportPins2");
+  if (ta) { ta.classList.add("show"); ta.value = ""; ta.focus(); }
+  if (btn) btn.style.display = "inline-block";
+}
+
+function importPins2() {
+  const ta = document.getElementById("pinImportTextarea2");
+  if (!ta || !ta.value.trim()) { toast("请粘贴点位代码"); return; }
+  try {
+    const data = JSON.parse(decodeURIComponent(atob(ta.value.trim())));
+    if (!Array.isArray(data)) throw new Error("格式错误");
+    let imported = 0;
+    data.forEach(item => {
+      if (!item.name || item.x == null || item.y == null) return;
+      state.mapPins.push({
+        id: uid(), name: item.name, icon: item.icon || "📍",
+        x: item.x, y: item.y, island: item.island || "", createdAt: Date.now()
+      });
+      imported++;
+    });
+    if (imported > 0) {
+      save(); renderMapPins(); renderPinList2();
+      toast(`成功导入 ${imported} 个点位！`);
+    } else { toast("未导入有效点位"); }
+  } catch (e) {
+    console.error(e);
+    toast("导入失败：代码格式错误");
+  }
+}
+
+function renderRecipeList() {
+  const list = document.getElementById("recipeList");
+  if (!list) return;
+  if (state.potion.recipes.length === 0) {
+    list.innerHTML = `<div class="empty">暂无配方，去炼丹炉配置药材后保存为配方吧！</div>`;
+    return;
+  }
+  list.innerHTML = state.potion.recipes.map(r => {
+    const slots = r.slots.map(s => Array.isArray(s) ? s : (s ? [s] : []));
+    return `
+    <div class="recipe-item">
+      <div class="recipe-header">
+        <div class="recipe-name">📜 ${escapeHtml(r.name)}</div>
+        <div class="recipe-actions">
+          <button class="btn btn-ghost" data-load-recipe="${r.id}">加载</button>
+          <button class="btn btn-danger" data-del-recipe="${r.id}">删除</button>
+        </div>
+      </div>
+      <div class="recipe-herbs">
+        ${[0,1,2,3].map(i => {
+          const herbIds = slots[i] || [];
+          if (herbIds.length > 0) {
+            const herbs = herbIds.map(id => getHerbById(id)).filter(Boolean);
+            return `
+              <div class="recipe-herb-slot multi">
+                <div class="rhs-fire">${FIRE_ICONS[i]} ${FIRE_NAMES[i]}</div>
+                <div class="rhs-herbs-list">
+                  ${herbs.map(h => `<span class="rhs-herb-mini" title="${escapeHtml(h.name)}">${escapeHtml(h.icon)}</span>`).join("")}
+                </div>
+                <div class="rhs-count">${herbs.length}味</div>
+              </div>
+            `;
+          }
+          return `<div class="recipe-herb-slot empty"><div class="rhs-fire">${FIRE_ICONS[i]} ${FIRE_NAMES[i]}</div>空</div>`;
+        }).join("")}
+      </div>
+    </div>
+  `}).join("");
+
+  list.querySelectorAll("[data-load-recipe]").forEach(btn => {
+    btn.addEventListener("click", () => loadRecipe(btn.dataset.loadRecipe));
+  });
+  list.querySelectorAll("[data-del-recipe]").forEach(btn => {
+    btn.addEventListener("click", () => deleteRecipe(btn.dataset.delRecipe));
+  });
+}
+
+function addCustomHerb() {
+  const name = document.getElementById("inputHerbName").value.trim();
+  if (!name) { toast("请输入药材名称"); return; }
+  const quality = document.getElementById("inputHerbQuality").value;
+  const element = document.getElementById("inputHerbElement").value;
+  const customIconVal = document.getElementById("customHerbIcon").value.trim();
+  const icon = customIconVal || state.potion.selectedHerbIcon || "🌿";
+
+  const herb = {
+    id: "herb_custom_" + uid(),
+    name,
+    icon,
+    quality,
+    element: element || "",
+    preset: false
+  };
+  state.potion.customHerbs.push(herb);
+  save();
+  renderPotionAll();
+  toast(`已添加：${name}`);
+
+  document.getElementById("inputHerbName").value = "";
+  document.getElementById("customHerbIcon").value = "";
+  document.querySelectorAll(".h-icon-btn").forEach(b => b.classList.remove("selected"));
+  document.querySelector('.h-icon-btn[data-icon="🌿"]')?.classList.add("selected");
+  state.potion.selectedHerbIcon = "🌿";
+}
+
 function renderAll() {
-  applyI18n();
+  renderCategoryFilter();
   renderItemList();
   renderHistory();
   renderReminder();
   updateNotifyStatus();
+  if (state.currentTab === "potion") renderPotionAll();
 }
 
-/* ======================== 初始化 ======================== */
 function init() {
   load();
-  applyI18n();
+  
+  // Tab 切换
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+  });
+  switchTab(state.currentTab);
+
+  // 图标选择
+  document.querySelectorAll("#iconPicker .icon-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#iconPicker .icon-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.selectedIcon = btn.dataset.icon;
+      document.getElementById("customIcon").value = "";
+    });
+  });
+  
+  document.getElementById("customIcon").addEventListener("input", (e) => {
+    if (e.target.value.trim()) {
+      document.querySelectorAll("#iconPicker .icon-btn").forEach(b => b.classList.remove("selected"));
+    }
+  });
+
+  // 分类自定义
+  document.getElementById("inputCategory").addEventListener("change", (e) => {
+    document.getElementById("customCategoryWrapper").style.display = e.target.value === "__custom__" ? "block" : "none";
+  });
 
   document.getElementById("btnAdd").addEventListener("click", addItem);
   document.getElementById("btnClearHistory").addEventListener("click", clearFilteredHistory);
   document.getElementById("filterItem").addEventListener("change", renderHistory);
 
-  // 提醒设置
   document.getElementById("btnEnableNotify").addEventListener("click", requestNotify);
-  document.getElementById("chkSound").addEventListener("change", e => {
-    state.settings.sound = e.target.checked; save();
-  });
   document.getElementById("chkLead").addEventListener("change", e => {
     state.settings.lead = e.target.checked; save();
   });
-  document.getElementById("chkSound").checked = !!state.settings.sound;
-  document.getElementById("chkLead").checked = !!state.settings.lead;
+  document.getElementById("chkAutoUpdate").addEventListener("change", e => {
+    state.settings.autoCheckUpdate = e.target.checked; save();
+  });
+  document.getElementById("chkLead").checked = state.settings.lead !== false;
+  document.getElementById("chkAutoUpdate").checked = state.settings.autoCheckUpdate !== false;
 
-  document.querySelectorAll(".lang-switch button").forEach(b => {
-    b.addEventListener("click", () => {
-      state.lang = b.dataset.lang;
+  /* ===== 炼药功能初始化 ===== */
+  document.querySelectorAll(".subtab-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchPotionSubtab(btn.dataset.subtab));
+  });
+
+  document.querySelectorAll(".fire-slot").forEach(slot => {
+    slot.addEventListener("click", () => {
+      const idx = parseInt(slot.dataset.slot, 10);
+      state.potion.selectedSlot = idx;
       save();
-      renderAll();
+      renderCauldron();
     });
   });
 
-  // 离开页面提示：将最近一次刷新时间写入 localStorage
-  // 重新打开页面时，若仍处于「刷新中」则给出"距离下次刷新 N 分钟"的提示
+  document.querySelectorAll(".fire-herb-slot").forEach(slot => {
+    slot.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const idx = parseInt(slot.dataset.herbSlot, 10);
+      if (state.potion.cauldronSlots[idx]) {
+        state.potion.cauldronSlots[idx] = null;
+        state.potion.selectedSlot = idx;
+        save();
+        renderCauldron();
+        toast("已取出药材");
+      }
+    });
+  });
+
+  document.getElementById("btnClearCauldron")?.addEventListener("click", clearCauldron);
+  document.getElementById("btnSaveRecipe")?.addEventListener("click", saveAsRecipe);
+  document.getElementById("btnAddHerb")?.addEventListener("click", addCustomHerb);
+  document.getElementById("btnCalc")?.addEventListener("click", calcHerbs);
+  document.getElementById("btnExportAll")?.addEventListener("click", exportRecipes);
+  document.getElementById("btnImport")?.addEventListener("click", showImportArea);
+  document.getElementById("btnDoImport")?.addEventListener("click", importRecipes);
+  document.getElementById("btnCopyExport")?.addEventListener("click", copyExportCode);
+
+  // 地图点位事件
+  document.getElementById("btnAddPin")?.addEventListener("click", addPin);
+  document.getElementById("btnExportPins")?.addEventListener("click", exportPins);
+  document.getElementById("btnImportPins")?.addEventListener("click", showPinImportArea);
+  document.getElementById("btnDoImportPins")?.addEventListener("click", importPins);
+  document.getElementById("btnCopyPinExport")?.addEventListener("click", copyPinExportCode);
+
+  document.getElementById("pinSearch")?.addEventListener("input", renderPinList);
+  document.getElementById("pinIslandFilter")?.addEventListener("change", renderPinList);
+
+  document.querySelectorAll(".pin-icon-picker .pi-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".pin-icon-picker .pi-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedPinIcon = btn.dataset.icon;
+    });
+  });
+
+  // 交互式地图事件
+  document.getElementById("btnMapZoomIn")?.addEventListener("click", () => zoomMap(0.2));
+  document.getElementById("btnMapZoomOut")?.addEventListener("click", () => zoomMap(-0.2));
+  document.getElementById("btnMapReset")?.addEventListener("click", resetMap);
+  document.getElementById("btnAddPinOnMap")?.addEventListener("click", toggleAddPinMode);
+  document.getElementById("btnUploadMapBg")?.addEventListener("click", () => {
+    document.getElementById("mapBgInput")?.click();
+  });
+  document.getElementById("mapBgInput")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const dataUrl = ev.target.result;
+      state.mapBgData = dataUrl;
+      save();
+      loadMapBgFromData(dataUrl);
+      toast("地图背景已加载");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("btnAddPin2")?.addEventListener("click", addPin2);
+  document.getElementById("btnExportPins2")?.addEventListener("click", exportPins2);
+  document.getElementById("btnImportPins2")?.addEventListener("click", showPinImportArea2);
+  document.getElementById("btnDoImportPins2")?.addEventListener("click", importPins2);
+  document.getElementById("btnCopyPinExport2")?.addEventListener("click", copyPinExport2);
+  document.getElementById("pinSearch2")?.addEventListener("input", () => {
+    renderMapPins();
+    renderPinList2();
+  });
+
+  document.querySelectorAll("#pinIconPicker2 .pi-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#pinIconPicker2 .pi-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedPinIcon2 = btn.dataset.icon;
+    });
+  });
+
+  // 切到地图Tab时初始化
+  const mapTabBtn = document.querySelector('.tab-btn[data-tab="map"]');
+  if (mapTabBtn) {
+    mapTabBtn.addEventListener("click", () => {
+      setTimeout(() => {
+        if (!window._mapInited) {
+          window._mapInited = true;
+          initMap();
+        } else {
+          renderMapPins();
+          renderPinList2();
+        }
+      }, 50);
+    });
+  }
+
+  document.getElementById("cauldronRecipe")?.addEventListener("change", (e) => {
+    if (e.target.value) {
+      loadRecipe(e.target.value);
+    }
+  });
+
+  document.querySelectorAll(".quality-filter [data-quality]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.potion.filterQuality = btn.dataset.quality;
+      document.querySelectorAll(".quality-filter [data-quality]").forEach(b => {
+        b.classList.toggle("active", b.dataset.quality === btn.dataset.quality);
+      });
+      save();
+      renderHerbGrid();
+    });
+  });
+
+  document.querySelectorAll(".quality-filter [data-quality2]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.potion.filterQuality2 = btn.dataset.quality2;
+      document.querySelectorAll(".quality-filter [data-quality2]").forEach(b => {
+        b.classList.toggle("active", b.dataset.quality2 === btn.dataset.quality2);
+      });
+      save();
+      renderHerbLibraryGrid();
+    });
+  });
+
+  document.getElementById("herbSearch")?.addEventListener("input", (e) => {
+    state.potion.searchQuery = e.target.value;
+    renderHerbGrid();
+  });
+
+  document.querySelectorAll(".herb-icon-picker .h-icon-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".herb-icon-picker .h-icon-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.potion.selectedHerbIcon = btn.dataset.icon;
+      document.getElementById("customHerbIcon").value = "";
+    });
+  });
+
+  document.getElementById("customHerbIcon")?.addEventListener("input", (e) => {
+    if (e.target.value.trim()) {
+      document.querySelectorAll(".herb-icon-picker .h-icon-btn").forEach(b => b.classList.remove("selected"));
+    }
+  });
+
   window.addEventListener("beforeunload", () => {
     try {
       const pending = state.items
-        .map(it => ({ name: it.nameCN || it.nameEN, at: it.nextAt }))
+        .map(it => ({ name: it.name, at: it.nextAt }))
         .filter(x => x.at > Date.now())
         .sort((a,b) => a.at - b.at)
         .slice(0, 5);
@@ -1158,7 +3678,6 @@ function init() {
     } catch(e) {}
   });
 
-  // 打开页面时检查暂存的下次刷新
   try {
     const raw = localStorage.getItem("game_refresh_timer_pending");
     if (raw) {
@@ -1168,19 +3687,12 @@ function init() {
         const ms = top.at - Date.now();
         if (ms > 0) {
           setTimeout(() => {
-            toast((state.lang==='zh'?'上次离开前最近的刷新：':'Last pending: ') + top.name +
-                  " · " + (state.lang==='zh'?'约 ':'in ') + formatDuration(ms/1000) +
-                  (state.lang==='zh'?' 后刷新':' to spawn'));
-          }, 600);
+            toast(`${top.name} · 约${formatDuration(ms/1000)}后刷新`);
+          }, 500);
         }
       }
     }
   } catch(e) {}
-
-  // 注册后台刷新到期检查（即便切到后台，到点会尝试触发）
-  if ("serviceWorker" in navigator) {
-    // 仅占位，能力有限，仍靠前台 tick
-  }
 
   renderAll();
   setInterval(tick, 1000);
@@ -1188,12 +3700,103 @@ function init() {
 
 init();
 
-// 注册 Service Worker（PWA 离线 + 通知）
+/* Service Worker + 更新 */
+let pendingReg = null;
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW register failed:", err));
+    navigator.serviceWorker.register("./sw.js")
+      .then(reg => {
+        if (state.settings.autoCheckUpdate !== false && reg.update) reg.update();
+        if (reg.waiting) { pendingReg = reg; showUpdateBanner(); }
+        reg.addEventListener("updatefound", () => {
+          const nw = reg.installing;
+          if (!nw) return;
+          nw.addEventListener("statechange", () => {
+            if (nw.state === "installed" && navigator.serviceWorker.controller) {
+              pendingReg = reg; showUpdateBanner();
+            }
+          });
+        });
+      })
+      .catch(err => console.warn("SW register failed:", err));
   });
 }
+
+async function checkVersionUpdate() {
+  try {
+    const res = await fetch(`./version.json?t=${Date.now()}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const curEl = document.getElementById("versionNum");
+    if (!curEl) return;
+    const cur = curEl.textContent.trim();
+    if (data.version && data.version !== cur) {
+      const bannerText = document.getElementById("updateBannerText");
+      if (bannerText && data.changelog) bannerText.textContent = `发现新版本 v${data.version}：${data.changelog}`;
+      if (!localStorage.getItem("update_dismissed_v" + data.version)) showUpdateBanner();
+    }
+  } catch(e) {}
+}
+
+function showUpdateBanner() {
+  const banner = document.getElementById("updateBanner");
+  if (banner) banner.classList.add("show");
+}
+function hideUpdateBanner() {
+  const banner = document.getElementById("updateBanner");
+  if (banner) banner.classList.remove("show");
+}
+function applyUpdate() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg?.waiting) {
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        setTimeout(() => window.location.reload(), 300);
+      } else window.location.reload();
+    }).catch(() => window.location.reload());
+  } else window.location.reload();
+}
+function dismissUpdate() {
+  hideUpdateBanner();
+  const ver = document.getElementById("versionNum")?.textContent?.trim() || "latest";
+  try { localStorage.setItem("update_dismissed_v" + ver, "1"); } catch(e) {}
+}
+function manualCheckUpdate() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg?.update) {
+        reg.update().then(() => {
+          toast("正在检查更新...");
+          setTimeout(() => {
+            if (pendingReg?.waiting) showUpdateBanner();
+            else checkVersionUpdate().then(() => {
+              const banner = document.getElementById("updateBanner");
+              if (!banner || !banner.classList.contains("show")) toast("当前已是最新版本");
+            });
+          }, 1500);
+        });
+      }
+    });
+  } else checkVersionUpdate();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnNow = document.getElementById("btnUpdateNow");
+  const btnLater = document.getElementById("btnUpdateLater");
+  if (btnNow) btnNow.addEventListener("click", applyUpdate);
+  if (btnLater) btnLater.addEventListener("click", dismissUpdate);
+  const verTag = document.querySelector(".version-tag");
+  if (verTag) {
+    verTag.style.cursor = "pointer";
+    verTag.title = "点击检查更新";
+    verTag.addEventListener("click", manualCheckUpdate);
+  }
+  if (state.settings.autoCheckUpdate !== false) {
+    setTimeout(checkVersionUpdate, 3000);
+    setInterval(checkVersionUpdate, 30 * 60 * 1000);
+  }
+});
 </script>
 </body>
 </html>
